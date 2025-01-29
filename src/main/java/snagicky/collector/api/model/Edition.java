@@ -15,7 +15,7 @@ public class Edition {
     @Column(name = "name")
     public String Name;
 
-    @JsonBackReference
+    @ManyToMany()
     @JoinTable(
             name = "card_edition",
             joinColumns = @JoinColumn(name = "edition"),

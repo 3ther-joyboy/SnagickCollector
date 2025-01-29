@@ -1,7 +1,5 @@
 package snagicky.collector.api.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Set;
@@ -9,7 +7,6 @@ import java.util.Set;
 @Entity
 @Table(name = "sub_type")
 public class SubType {
-    public SubType(){}
     @jakarta.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -20,7 +17,6 @@ public class SubType {
     @Column(name = "description")
     public String Description;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "subType")
     public Set<Type> Types;
 }

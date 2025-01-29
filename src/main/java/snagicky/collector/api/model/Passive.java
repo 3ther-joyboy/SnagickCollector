@@ -20,7 +20,7 @@ public class Passive {
     @Column(name = "description")
     public String Description;
 
-    @JsonBackReference
+    @ManyToMany()
     @JoinTable(
             name = "card_passive",
             joinColumns = @JoinColumn(name = "passive"),

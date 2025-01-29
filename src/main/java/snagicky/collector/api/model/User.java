@@ -1,8 +1,6 @@
 package snagicky.collector.api.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.util.Set;
@@ -10,7 +8,6 @@ import java.util.Set;
 @Entity
 @Table(name = "user")
 public class User {
-    public User(){}
     @jakarta.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -19,16 +16,21 @@ public class User {
     @Column(name = "name")
     public String Name;
 
-    @JsonIgnore
-    @Column(name = "password")
-    public int Password;
+    @OneToMany(mappedBy = "ByUser")
+    public Set<Card> CreatedCards;
 
-    @JsonBackReference
     @ManyToMany()
     @JoinTable(
             name = "card_user",
             joinColumns = @JoinColumn(name = "user"),
             inverseJoinColumns = @JoinColumn(name = "card")
     )
-    public Set<Card> Cards;
+    public Set<Card> OwnedCards;
+
+    @Column(name = "perrmission")
+    public int Perrmission = 0;
+    // visitor  = 0
+    // user     = 1
+    // admin    = 2
+    // root     = 3
 }

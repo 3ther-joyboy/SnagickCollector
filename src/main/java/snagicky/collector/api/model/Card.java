@@ -1,33 +1,31 @@
 package snagicky.collector.api.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+
 import java.util.Set;
 
 @Entity
-@Table(name = "cards")
+@Table(name = "card")
 public class Card {
-    public Card(){}
-    @Id
+    @jakarta.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     public long Id;
 
-    @Column(name = "created_by")
+    @ManyToOne
+    @JoinColumn(name = "created_by",nullable = false)
     public User ByUser;
-    @ManyToMany(mappedBy = "Cards")
+
+    @ManyToMany(mappedBy = "OwnedCards")
     public Set<User> OwnedBy;
 
     @ManyToMany(mappedBy = "Cards")
-    @JsonManagedReference
     public Set<Edition> Editions;
 
     @ManyToMany(mappedBy = "Cards")
-    @JsonManagedReference
     public Set<Passive> Passives;
 
     @ManyToOne
-    @JsonManagedReference
     @JoinColumn(name = "type",nullable = false)
     public Type type;
 

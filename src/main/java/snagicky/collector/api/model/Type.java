@@ -18,12 +18,10 @@ public class Type {
     @Column(name = "name")
     public String Name;
 
-    @JsonBackReference
     @OneToMany(mappedBy = "type")
     public Set<Card> Cards;
 
-
-    @JsonIgnore
+    @ManyToOne
     @JoinColumn(name = "sub_type",nullable = false)
     public SubType subType;
 
