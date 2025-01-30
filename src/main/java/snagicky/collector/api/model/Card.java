@@ -18,6 +18,8 @@ public class Card {
 
     @ManyToMany(mappedBy = "OwnedCards")
     public Set<User> OwnedBy;
+    @ManyToMany(mappedBy = "SavedCards")
+    public Set<User> SavedBy;
 
     @ManyToMany(mappedBy = "Cards")
     public Set<Edition> Editions;
