@@ -1,7 +1,10 @@
 package snagicky.collector.api.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import java.sql.Timestamp;
 import java.util.Set;
 
 @Entity
@@ -11,6 +14,12 @@ public class Card {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     public long Id;
+
+
+    @CreationTimestamp
+    private java.sql.Timestamp Created;
+    @UpdateTimestamp
+    private java.sql.Timestamp Updated;
 
     @ManyToOne
     @JoinColumn(name = "created_by",nullable = false)
@@ -23,13 +32,19 @@ public class Card {
 
     @ManyToMany(mappedBy = "Cards")
     public Set<Edition> Editions;
-
     @ManyToMany(mappedBy = "Cards")
     public Set<Passive> Passives;
 
     @ManyToOne
     @JoinColumn(name = "type",nullable = false)
     public Type type;
+    @Column(name = "rarity",nullable = false)
+    public String Rarity;
+
+    @Column(name = "attack")
+    public int Attack;
+    @Column(name = "defense")
+    public int Defense;
 
     @Column(name = "name",nullable = false)
     public String Name;
@@ -37,6 +52,8 @@ public class Card {
     public String Description;
     @Column(name = "story")
     public String Story;
+    @Column(name = "note")
+    public String Note;
 
     @Column(name = "red", nullable = false)
     public int Red = 0;
