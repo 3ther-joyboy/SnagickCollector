@@ -11,59 +11,67 @@ public interface CardRepo extends CrudRepository<Card,Long> {
 
     @Query(nativeQuery = true,value = "SELECT " +
             "* " +
-            "FROM card_edition INNER JOIN card on card.id = card_edition.card_id " +
+//                    "FROM card_edition INNER JOIN card on card.id = card_edition.card " +
             "WHERE " +
+
             "(:Id is null or card.id = :Id) and " +
 
+
+
+
+            "(:Creator is null or card.created_by = :Creator ) and " +
+
             "(:Name is null or INSTR(card.name,:Name)) and " +
-            "(:Type is null or cards.type = :Type) and " +
-            "(:Edition is null or card_edition.edition_id = :Edition) and " +
+            "(:Description is null or INSTR(card.description,:Description)) and " +
+            "(:Story is null or INSTR(card.story,:Story)) and " +
 
-            "(:Rarity is null or cards.rarity = :Rarity) and " +
-            "(:Description is null or INSTR(cards.description,:Description)) and " +
-            "(:Story is null or INSTR(cards.story,:Story)) and " +
+//                    "(:Edition is null or card_edition.edition_id = :Edition) and " +
+            "(:Type is null or card.type = :Type) and " +
+            "(:Rarity is null or card.rarity = :Rarity) and " +
 
-            "(:Attack is null or cards.attack = :Attack) and " +
-            "(:Defense is null or cards.defense = :Defense) and " +
+
+            "(:Attack is null or card.attack = :Attack) and " +
+            "(:Defense is null or card.defense = :Defense) and " +
 
             "(CASE :TotalToggle " +
-            "WHEN -1 THEN (:TotalCost is null or (cards.white + cards.green + cards.blue + cards.red + cards.multi) < :TotalCost) " +
-            "WHEN 1 THEN (:TotalCost is null or (cards.white + cards.green + cards.blue + cards.red + cards.multi) >= :TotalCost) " +
-            "ELSE (:TotalCost is null or (cards.white + cards.green + cards.blue + cards.red + cards.multi) = :TotalCost) " +
+            "WHEN -1 THEN (:TotalCost is null or (card.white + card.green + card.blue + card.red + card.multi) < :TotalCost) " +
+            "WHEN 1 THEN (:TotalCost is null or (card.white + card.green + card.blue + card.red + card.multi) >= :TotalCost) " +
+            "ELSE (:TotalCost is null or (card.white + card.green + card.blue + card.red + card.multi) = :TotalCost) " +
             "END) and " +
             "(CASE :MultiToggle " +
-            "WHEN -1 THEN (:MultiCost is null or cards.multi < :MultiCost) " +
-            "WHEN 1 THEN (:MultiCost is null or cards.multi >= :MultiCost) " +
-            "ELSE (:MultiCost is null or cards.multi = :MultiCost) " +
+            "WHEN -1 THEN (:MultiCost is null or card.multi < :MultiCost) " +
+            "WHEN 1 THEN (:MultiCost is null or card.multi >= :MultiCost) " +
+            "ELSE (:MultiCost is null or card.multi = :MultiCost) " +
             "END) and " +
             "(CASE :WhiteToggle " +
-            "WHEN -1 THEN (:WhiteCost is null or cards.white < :WhiteCost) " +
-            "WHEN 1  THEN (:WhiteCost is null or cards.white >= :WhiteCost) " +
-            "ELSE (:WhiteCost is null or cards.white = :WhiteCost) " +
+            "WHEN -1 THEN (:WhiteCost is null or card.white < :WhiteCost) " +
+            "WHEN 1  THEN (:WhiteCost is null or card.white >= :WhiteCost) " +
+            "ELSE (:WhiteCost is null or card.white = :WhiteCost) " +
             "END) and " +
             "(CASE :GreenToggle " +
-            "WHEN -1 THEN (:GreenCost is null or cards.green < :GreenCost) " +
-            "WHEN 1 THEN (:GreenCost is null or cards.green >= :GreenCost) " +
-            "ELSE (:GreenCost is null or cards.green = :GreenCost) " +
+            "WHEN -1 THEN (:GreenCost is null or card.green < :GreenCost) " +
+            "WHEN 1 THEN (:GreenCost is null or card.green >= :GreenCost) " +
+            "ELSE (:GreenCost is null or card.green = :GreenCost) " +
             "END) and " +
             "(CASE :BlueToggle " +
-            "WHEN -1 THEN (:BlueCost is null or cards.blue < :BlueCost) " +
-            "WHEN 1 THEN (:BlueCost is null or cards.blue >= :BlueCost) " +
-            "ELSE (:BlueCost is null or cards.blue = :BlueCost) " +
+            "WHEN -1 THEN (:BlueCost is null or card.blue < :BlueCost) " +
+            "WHEN 1 THEN (:BlueCost is null or card.blue >= :BlueCost) " +
+            "ELSE (:BlueCost is null or card.blue = :BlueCost) " +
             "END) and " +
             "(CASE :RedToggle " +
-            "WHEN -1 THEN (:RedCost is null or cards.red < :RedCost) " +
-            "WHEN 1 THEN (:RedCost is null or cards.red >= :RedCost) " +
-            "ELSE (:RedCost is null or cards.red = :RedCost) " +
+            "WHEN -1 THEN (:RedCost is null or card.red < :RedCost) " +
+            "WHEN 1 THEN (:RedCost is null or card.red >= :RedCost) " +
+            "ELSE (:RedCost is null or card.red = :RedCost) " +
             "END) " +
 
-            "ORDER BY cards.name DESC LIMIT :Limit OFFSET :Offset"
+            "ORDER BY card.name DESC LIMIT :Limit OFFSET :Offset"
     )
     Iterable<Card> FindCard(
             @Param("Id") Integer id,
+            @Param("Creator") Integer creator,
+            //           @Param("Owner") Intiger owner,
+
             @Param("Edition") Integer edition,
-            @Param("Owner") Integer owner,
-            @Param("Poaster") Integer poaster,
 
             @Param("Name") String name,
             @Param("Type") Integer type,
@@ -91,6 +99,7 @@ public interface CardRepo extends CrudRepository<Card,Long> {
             @Param("Offset") Integer offset,
             @Param("Limit") Integer limit
     );
+
     // i am sorry, i trully dont know how to fix this, ill look for more
 
 }
