@@ -32,8 +32,6 @@ public class Card {
 
     @ManyToMany(mappedBy = "Cards")
     public Set<Edition> Editions;
-    @ManyToMany(mappedBy = "Cards")
-    public Set<Passive> Passives;
 
     @ManyToOne
     @JoinColumn(name = "type",nullable = false)

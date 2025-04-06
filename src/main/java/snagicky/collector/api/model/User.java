@@ -1,6 +1,7 @@
 package snagicky.collector.api.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
@@ -14,13 +15,16 @@ public class User {
     @Column(name = "id")
     public long Id;
 
-    @Column(name = "name",unique = true)
+    @Column(name = "name",unique = true, nullable = false)
     public String Name;
     @Column(name = "bio")
     public String Bio;
 
     @Column(name = "password")
-    private int Password;
+    public int Password;
+
+    @Column(name = "re_email", nullable = true)
+    public String Email;
 
     @OneToMany(mappedBy = "ByUser")
     public Set<Card> CreatedCards;
@@ -45,15 +49,18 @@ public class User {
     public int Perrmission = 0;
     // visitor  = 0
     // user     = 1
-    // admin    = 2
-    // root     = 3 (have to be created thrue database)
+    // admin    = 2 (can edit just cards)
+    // Admin    = 3 (can manage lvl 1 profiles)
+    // Root     = 4 (have to be created through database)
 
     @UpdateTimestamp
-    public Timestamp Time;
+    public Timestamp UTime;
+    @CreationTimestamp
+    public Timestamp CTime;
 
     public int Salt(String password) { // [CREATE YOUR OWN SALT](https://www.youtube.com/watch?v=8ZtInClXe1Q)
         // this is place holder
-        String StringPassword = Name + password + Time + "PlaceForEnvironmentVariable";
+        String StringPassword = Name + password + CTime + "PlaceForEnvironmentVariable";
         return StringPassword.hashCode();
     }
     public boolean CheckPassword(String password){

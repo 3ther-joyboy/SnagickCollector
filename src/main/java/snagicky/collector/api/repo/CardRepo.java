@@ -6,6 +6,8 @@ import snagicky.collector.api.model.Card;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.List;
+
 @Repository
 public interface CardRepo extends CrudRepository<Card,Long> {
 
@@ -102,4 +104,6 @@ public interface CardRepo extends CrudRepository<Card,Long> {
 
     // i am sorry, i trully dont know how to fix this, ill look for more
 
+    //
+    List<Card> FindCard(List<String> Arguments);
 }
