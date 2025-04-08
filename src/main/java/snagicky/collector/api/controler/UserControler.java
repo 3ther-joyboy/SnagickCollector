@@ -9,7 +9,6 @@ import snagicky.collector.api.model.User;
 import snagicky.collector.api.repo.TokenRepo;
 import snagicky.collector.api.repo.UserRepo;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController()
@@ -23,22 +22,18 @@ public class UserControler {
     // creates unverivied user (guest user - 0)
     @PutMapping("/{name}/{password}")
     public ResponseEntity<UUID> CreateUser(@PathVariable("name") String name, @PathVariable("password") String password, @RequestParam(value = "email", defaultValue = "", required = false) String email) {
-        try {
-            User us = new User();
-            us.Name = name;
+        User us = new User();
+        us.Name = name;
 
-            User CreatedUser = ur.save(us);
-            CreatedUser.Password = CreatedUser.Salt(password);
+        User CreatedUser = ur.save(us);
+        CreatedUser.Password = CreatedUser.Salt(password);
 
-            if (!email.isEmpty()) {
-                // TODO sends email with verivication
-                CreatedUser.Email = email;
-            }
-
-            return ResponseEntity.ok(UserLoginToken(ur.save(CreatedUser)).Code);
-        } catch (Exception e) {
-            return ResponseEntity.ofNullable(UUID.randomUUID());
+        if (!email.isEmpty()) {
+            // TODO sends email with verivication
+            CreatedUser.Email = email;
         }
+
+        return ResponseEntity.ok(UserLoginToken(ur.save(CreatedUser)).Code);
     }
 
     // Links login token to given user

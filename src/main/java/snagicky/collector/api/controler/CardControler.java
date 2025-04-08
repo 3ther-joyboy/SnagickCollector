@@ -1,11 +1,12 @@
 package snagicky.collector.api.controler;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import snagicky.collector.api.model.Card;
 import snagicky.collector.api.repo.CardRepo;
+
+import java.net.http.HttpResponse;
 
 @RestController()
 @RequestMapping("/api/card")
@@ -16,5 +17,11 @@ public class CardControler {
     @GetMapping("/all/")
     public Iterable<Card> GetAll() {
         return cr.findAll();
+    }
+
+    @PostMapping("/")
+    public ResponseEntity.BodyBuilder CreateCard() {
+
+        return ResponseEntity.status(200);
     }
 }
