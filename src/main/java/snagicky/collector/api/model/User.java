@@ -47,11 +47,12 @@ public class User {
 
     @Column(name = "perrmission")
     public int Perrmission = 0;
-    // visitor  = 0
-    // user     = 1
-    // admin    = 2 (can edit just cards)
-    // Admin    = 3 (can manage lvl 1 profiles)
-    // Root     = 4 (have to be created through database)
+    // visitor  = 0 (perrmissions as user1 but is deleted after a while, email less)
+    // user     = 1 (cant add test cards)
+    // User     = 2
+    // admin    = 3 (can edit just cards)
+    // Admin    = 4 (can manage lvl 1 profiles)
+    // Root     = 5 (have to be created through database)
 
     @UpdateTimestamp
     public Timestamp UTime;
