@@ -12,4 +12,7 @@ import java.util.UUID;
 public interface TokenRepo extends CrudRepository<Token,Long> {
     @Query(countQuery = "SELECT * FROM token WHERE code = :Code",nativeQuery = true)
     Token TokenFromUUID(@Param("Code") UUID code);
+
+    @Query(countQuery = "SELECT EXISTs( SELECT * FROM token WHERE code = :Code)",nativeQuery = true)
+    long TokenExists(@Param("Code") UUID code);
 }

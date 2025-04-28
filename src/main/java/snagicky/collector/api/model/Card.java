@@ -13,7 +13,7 @@ public class Card {
     @jakarta.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    public long Id;
+    public Long Id;
 
 
     @CreationTimestamp
