@@ -20,8 +20,14 @@ public class UserControler {
     TokenRepo tr;
 
     // creates unverivied user (guest user - 0)
-    @PutMapping("/{name}/{password}")
-    public ResponseEntity<UUID> CreateUser(@PathVariable("name") String name, @PathVariable("password") String password, @RequestParam(value = "email", defaultValue = "", required = false) String email) {
+
+    // Password is in Header
+    @PostMapping("/{name}")
+    public ResponseEntity<UUID> CreateUser(
+            @PathVariable("name") String name,
+            @RequestHeader("password") String password, // HEADER!!
+            @RequestHeader(value = "email", defaultValue = "", required = false) String email // HEADER!!
+    ) {
         User us = new User();
         us.Name = name;
 
@@ -35,7 +41,17 @@ public class UserControler {
 
         return ResponseEntity.ok(UserLoginToken(ur.save(CreatedUser)).Code);
     }
-
+    // Verifies user from token
+    public ResponseEntity.BodyBuilder Verify(UUID code) {
+        try {
+            User usr = tr.TokenFromUUID(code).User;
+            if (usr.Perrmission == 0) usr.Perrmission = 1;
+            ur.save(usr);
+            return ResponseEntity.status(200);
+        } catch (Exception e) {
+            return ResponseEntity.status(500);
+        }
+    }
     // Links login token to given user
     public Token UserLoginToken(User usr) {
     /*

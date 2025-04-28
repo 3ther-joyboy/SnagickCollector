@@ -19,7 +19,10 @@ public class EditionControler {
     EditionRepo er;
 
     @PostMapping("/")
-    public ResponseEntity.BodyBuilder CreateEdition(@RequestBody() Edition obj, @RequestParam UUID code) {
+    public ResponseEntity.BodyBuilder CreateEdition(
+            @RequestBody() Edition obj,
+            @RequestHeader() UUID code
+    ) {
         if (tr.TokenFromUUID(code).CreateCards) {
             er.save(obj);
             return ResponseEntity.status(200);
