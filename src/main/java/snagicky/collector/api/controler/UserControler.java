@@ -10,6 +10,7 @@ import snagicky.collector.api.repo.CardRepo;
 import snagicky.collector.api.repo.TokenRepo;
 import snagicky.collector.api.repo.UserRepo;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -23,9 +24,21 @@ public class UserControler {
     @Autowired
     CardRepo cr;
 
-    // creates unverivied user (guest user - 0)
+    @GetMapping("/{id}")
+    public User FindUser(@PathVariable("id") long id){
+        return ur.findById(id).get();
+    }
 
-    // Password is in Header
+    @GetMapping("/")
+    public User FindUser(
+            @RequestParam(value = "name",required = false) String name,
+            @RequestParam(value = "id",required = false) long id,
+            @RequestParam(value = "bio",required = false) String bio,
+            @RequestParam(value = "card_owned",required = false) List<Long> card
+    ){
+        return new User(); // TODO everything
+    }
+
     @PostMapping("/create/{name}")
     public ResponseEntity<UUID> CreateUser(
             @PathVariable("name") String name,
