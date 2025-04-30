@@ -6,9 +6,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import snagicky.collector.api.model.Token;
 import snagicky.collector.api.model.User;
+import snagicky.collector.api.repo.CardRepo;
 import snagicky.collector.api.repo.TokenRepo;
 import snagicky.collector.api.repo.UserRepo;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController()
@@ -18,11 +20,13 @@ public class UserControler {
     UserRepo ur;
     @Autowired
     TokenRepo tr;
+    @Autowired
+    CardRepo cr;
 
     // creates unverivied user (guest user - 0)
 
     // Password is in Header
-    @PostMapping("/{name}")
+    @PostMapping("/create/{name}")
     public ResponseEntity<UUID> CreateUser(
             @PathVariable("name") String name,
             @RequestHeader("password") String password, // HEADER!!
@@ -40,6 +44,24 @@ public class UserControler {
         }
 
         return ResponseEntity.ok(UserLoginToken(ur.save(CreatedUser)).Code);
+    }
+    @PutMapping("/edit/")
+    public ResponseEntity.BodyBuilder EditBio(
+            @RequestHeader("token") UUID t,
+            @RequestHeader(value = "bio",required = false) String bio,
+            @RequestHeader(value = "user_id",required = false) Long id
+    ){
+        Token token = tr.TokenFromUUID(t);
+        if (id == null || !token.EditLower)
+            id = token.User.Id;
+        if(token.EditSelf || token.EditLower){
+            User usr = ur.findById(id).get();
+            usr.Bio = bio;
+
+            ur.save(usr);
+            return ResponseEntity.status(200);
+        }
+        return ResponseEntity.status(500);
     }
     // Verifies user from token
     public ResponseEntity.BodyBuilder Verify(UUID code) {
