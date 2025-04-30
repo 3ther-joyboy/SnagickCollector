@@ -41,6 +41,8 @@ public class Token {
     public boolean EditCards = false;
     @Column(name = "change_permission")
     public boolean ChangePermission = false;
+    @Column(name = "change_password")
+    public boolean ChangePassword = false;
 
     @Column(name = "termination_date")
     private java.sql.Timestamp TerminationDate;

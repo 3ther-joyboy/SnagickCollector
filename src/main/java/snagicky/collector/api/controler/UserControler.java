@@ -45,6 +45,35 @@ public class UserControler {
 
         return ResponseEntity.ok(UserLoginToken(ur.save(CreatedUser)).Code);
     }
+    @PutMapping("/password/")
+    public ResponseEntity.BodyBuilder ResetPassword(
+            @RequestHeader("token") UUID token,
+            @RequestHeader("password") String password
+    ) {
+        try {
+            Token t = tr.TokenFromUUID(token);
+            t.User.Password = t.User.Salt(password);
+            ur.save(t.User);
+            return ResponseEntity.status(200);
+        } catch (Exception e) {
+            return ResponseEntity.status(500);
+        }
+    }
+    @GetMapping("/password/")
+    public UUID ResetPasswordToken(
+            @RequestHeader("token") UUID token,
+            @RequestHeader("password") String password
+    ) {
+        User u = tr.TokenFromUUID(token).User;
+        if (password != null){return null;} // TODO send email with password reset token
+        if(u.Password == u.Salt(password)){
+            Token t = new Token();
+            t.ChangePassword = true;
+            t.User = u;
+            return tr.save(t).Code;
+        }
+        return null;
+    }
     @PutMapping("/edit/")
     public ResponseEntity.BodyBuilder EditBio(
             @RequestHeader("token") UUID t,
@@ -90,6 +119,7 @@ public class UserControler {
         8 create_test_cards
         9 edit_cards
         10 change_permission (up to [not included] your level)
+        11 change password
 
         visitor  = 0 (perrmissions as user1 but is deleted after a while, email less)
         user     = 1 (cant add test cards)
@@ -102,13 +132,13 @@ public class UserControler {
         final boolean x = false;
         final boolean o = true;
         final boolean[][] PerrmissionsLvl = {
-        //      {1,2,3,4,5,6,7,8,9,0}
-                {x,x,o,x,x,x,x,x,x,x},
-                {x,x,o,x,x,x,x,x,x,x},
-                {x,x,o,x,x,x,x,o,x,x},
-                {x,x,o,x,x,x,o,o,o,x},
-                {x,o,o,x,o,o,o,o,o,o},
-                {x,o,o,x,o,o,o,o,o,o},
+        //      {1,2,3,4,5,6,7,8,9,0,1}
+                {x,x,o,x,x,x,x,x,x,x,x},
+                {x,x,o,x,x,x,x,x,x,x,x},
+                {x,x,o,x,x,x,x,o,x,x,x},
+                {x,x,o,x,x,x,o,o,o,x,x},
+                {x,o,o,x,o,o,o,o,o,o,x},
+                {x,o,o,x,o,o,o,o,o,o,x},
         };
         Token ver = new Token();
         ver.VerifySelf = PerrmissionsLvl[usr.Perrmission][0];
@@ -120,6 +150,8 @@ public class UserControler {
         ver.CreateTestCards = PerrmissionsLvl[usr.Perrmission][7];
         ver.EditCards = PerrmissionsLvl[usr.Perrmission][8];
         ver.ChangePermission = PerrmissionsLvl[usr.Perrmission][9];
+
+        ver.ChangePassword = PerrmissionsLvl[usr.Perrmission][10];
 
         return tr.save(ver);
     }
