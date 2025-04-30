@@ -49,14 +49,17 @@ public class UserControler {
     public ResponseEntity.BodyBuilder EditBio(
             @RequestHeader("token") UUID t,
             @RequestHeader(value = "bio",required = false) String bio,
+            @RequestHeader(value = "name",required = false) String name,
             @RequestHeader(value = "user_id",required = false) Long id
     ){
         Token token = tr.TokenFromUUID(t);
         if (id == null || !token.EditLower)
             id = token.User.Id;
         if(token.EditSelf || token.EditLower){
+
             User usr = ur.findById(id).get();
-            usr.Bio = bio;
+            if(bio != null) usr.Bio = bio;
+            if(name != null) usr.Name = name;
 
             ur.save(usr);
             return ResponseEntity.status(200);
