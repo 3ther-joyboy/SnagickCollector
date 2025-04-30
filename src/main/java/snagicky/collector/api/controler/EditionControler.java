@@ -18,12 +18,14 @@ public class EditionControler {
     @Autowired
     EditionRepo er;
 
-    @PostMapping("/")
+    @PostMapping("/create/{partm}")
     public ResponseEntity.BodyBuilder CreateEdition(
-            @RequestBody() Edition obj,
+            @RequestParam("parm") String name,
             @RequestHeader() UUID code
     ) {
         if (tr.TokenFromUUID(code).CreateCards) {
+            Edition obj = new Edition();
+            obj.Name = name;
             er.save(obj);
             return ResponseEntity.status(200);
         } else
