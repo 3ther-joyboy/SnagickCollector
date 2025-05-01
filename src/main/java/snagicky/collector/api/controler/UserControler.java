@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import snagicky.collector.api.model.Card;
 import snagicky.collector.api.model.Token;
 import snagicky.collector.api.model.User;
 import snagicky.collector.api.repo.CardRepo;
@@ -12,7 +13,13 @@ import snagicky.collector.api.repo.UserRepo;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+
+// For not that messy saving cards
+enum CardAction {
+    Save, Own;
+}
 
 @RestController()
 @RequestMapping("/api/user")
@@ -86,6 +93,58 @@ public class UserControler {
             return tr.save(t).Code;
         }
         return null;
+    }
+    // TODO allow admins edit bunch of stuff here
+    @GetMapping("/card/{action}/{id}") // Favs/Owned of a user
+    public Set<Card> GetSavedCards(
+            @RequestHeader("action") CardAction action,
+            @RequestParam("id") Long user
+    ) {
+        try {
+            User u = ur.findById(user).get();
+            if(action == CardAction.Own)
+                return u.OwnedCards;
+            else
+                return u.SavedCards;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    @PostMapping("/card/{action}/{id}") // make a favorite/owned for a user
+    public ResponseEntity.BodyBuilder CardSave(
+            @RequestHeader("token") UUID t,
+            @RequestHeader("action") CardAction action,
+            @RequestParam("id") Long card
+    ){
+        try{
+            User u = tr.TokenFromUUID(t).User;
+            // :D
+            (action == CardAction.Own ? u.OwnedCards : u.SavedCards ).add(cr.findById(card).get());
+            ur.save(u);
+
+            return ResponseEntity.status(200);
+        } catch (Exception e) {
+            return ResponseEntity.status(500);
+        }
+    }
+    @DeleteMapping("/card/{action}/{id}") // removes from favorites/owned for a user
+    public ResponseEntity.BodyBuilder CardUnSave(
+            @RequestHeader("token") UUID t,
+            @RequestHeader("action") CardAction action,
+            @RequestParam("id") Long card
+    ){
+        try{
+            User u = tr.TokenFromUUID(t).User;
+            if(action == CardAction.Own)
+                u.OwnedCards.remove(cr.findById(card).get());
+            else
+                u.SavedCards.remove(cr.findById(card).get());
+            ur.save(u);
+
+            return ResponseEntity.status(200);
+        } catch (Exception e) {
+            return ResponseEntity.status(500);
+        }
     }
     @PutMapping("/edit/")
     public ResponseEntity.BodyBuilder EditBio(
