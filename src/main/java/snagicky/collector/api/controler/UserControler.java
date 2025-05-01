@@ -146,6 +146,7 @@ public class UserControler {
             return ResponseEntity.status(500);
         }
     }
+
     @PutMapping("/edit/")
     public ResponseEntity.BodyBuilder EditBio(
             @RequestHeader("token") UUID t,
@@ -196,12 +197,10 @@ public class UserControler {
         10 change_permission (up to [not included] your level)
         11 change password
 
-        visitor  = 0 (perrmissions as user1 but is deleted after a while, email less)
-        user     = 1 (cant add test cards)
-        User     = 2
-        admin    = 3 (can edit just cards)
-        Admin    = 4 (can manage lvl 1 profiles)
-        Root     = 5 (have to be created through database)
+        visitor  = 0
+        User     = 1
+        Admin    = 2
+        Root     = 3 (have to be created through database)
 
         */
         final boolean x = false;
@@ -209,10 +208,8 @@ public class UserControler {
         final boolean[][] PerrmissionsLvl = {
         //      {1,2,3,4,5,6,7,8,9,0,1}
                 {x,x,o,x,x,x,x,x,x,x,x},
-                {x,x,o,x,x,x,x,x,x,x,x},
                 {x,x,o,x,x,x,x,o,x,x,x},
-                {x,x,o,x,x,x,o,o,o,x,x},
-                {x,o,o,x,o,o,o,o,o,o,x},
+                {x,o,o,x,x,o,o,o,o,x,x},
                 {x,o,o,x,o,o,o,o,o,o,x},
         };
         Token ver = new Token();
