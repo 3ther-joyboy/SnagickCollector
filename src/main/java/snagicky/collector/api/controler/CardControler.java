@@ -5,11 +5,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import snagicky.collector.api.model.Card;
 import snagicky.collector.api.model.Token;
+import snagicky.collector.api.model.User;
 import snagicky.collector.api.repo.CardRepo;
 import snagicky.collector.api.repo.EditionRepo;
 import snagicky.collector.api.repo.TokenRepo;
 
 import java.net.http.HttpResponse;
+import java.util.Set;
 import java.util.UUID;
 
 @RestController()
@@ -22,6 +24,16 @@ public class CardControler {
     @Autowired
     TokenRepo tr;
 
+    @GetMapping("/{state}/{id}")
+    public Set<User> CardOwnedUsers(
+            @RequestParam("state") CardAction action,
+            @RequestParam("id") Long card_id
+    ){
+        if(action == CardAction.Own)
+            return cr.findById(card_id).get().OwnedBy;
+        else
+            return cr.findById(card_id).get().SavedBy;
+    }
     @GetMapping("/all/")
     public Iterable<Card> GetAll() {
         return cr.findAll();
