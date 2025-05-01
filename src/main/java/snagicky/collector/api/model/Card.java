@@ -1,5 +1,6 @@
 package snagicky.collector.api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -25,8 +26,10 @@ public class Card {
     @JoinColumn(name = "created_by",nullable = false)
     public User ByUser;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "OwnedCards")
     public Set<User> OwnedBy;
+    @JsonIgnore
     @ManyToMany(mappedBy = "SavedCards")
     public Set<User> SavedBy;
 

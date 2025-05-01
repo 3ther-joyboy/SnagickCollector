@@ -1,5 +1,6 @@
 package snagicky.collector.api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Set;
@@ -17,6 +18,7 @@ public class SubType {
     @Column(name = "description")
     public String Description;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "subType")
     public Set<Type> Types;
 }

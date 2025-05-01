@@ -1,5 +1,6 @@
 package snagicky.collector.api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -20,15 +21,19 @@ public class User {
     @Column(name = "bio")
     public String Bio;
 
+    @JsonIgnore
     @Column(name = "password")
     public int Password;
 
+    @JsonIgnore
     @Column(name = "re_email", nullable = true)
     public String Email;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "ByUser")
     public Set<Card> CreatedCards;
 
+    @JsonIgnore
     @ManyToMany()
     @JoinTable(
             name = "card_user",
@@ -37,6 +42,7 @@ public class User {
     )
     public Set<Card> OwnedCards;
 
+    @JsonIgnore
     @ManyToMany()
     @JoinTable(
             name = "card_saved_user",
@@ -45,6 +51,7 @@ public class User {
     )
     public Set<Card> SavedCards;
 
+    @JsonIgnore
     @Column(name = "perrmission")
     public int Perrmission = 0;
     // visitor  = 0 (perrmissions as user1 but is deleted after a while, email less)
