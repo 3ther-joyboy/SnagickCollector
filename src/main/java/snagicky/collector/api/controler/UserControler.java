@@ -94,19 +94,22 @@ public class UserControler {
             @RequestHeader(value = "name",required = false) String name,
             @RequestHeader(value = "user_id",required = false) Long id
     ){
-        Token token = tr.TokenFromUUID(t);
-        if (id == null || !token.EditLower)
-            id = token.User.Id;
-        if(token.EditSelf || token.EditLower){
+        try {
+            Token token = tr.TokenFromUUID(t);
+            if (id == null || !token.EditLower)
+                id = token.User.Id;
+            if (token.EditSelf || token.EditLower) {
 
-            User usr = ur.findById(id).get();
-            if(bio != null) usr.Bio = bio;
-            if(name != null) usr.Name = name;
+                User usr = ur.findById(id).get();
+                if (bio != null) usr.Bio = bio;
+                if (name != null) usr.Name = name;
 
-            ur.save(usr);
-            return ResponseEntity.status(200);
+                ur.save(usr);
+                return ResponseEntity.status(200);
+            } else return ResponseEntity.status(403);
+        } catch (Exception e) {
+            return ResponseEntity.status(500);
         }
-        return ResponseEntity.status(500);
     }
     // Verifies user from token
     public ResponseEntity.BodyBuilder Verify(UUID code) {
