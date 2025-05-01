@@ -1,6 +1,7 @@
 package snagicky.collector.api.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -29,7 +30,7 @@ public class User {
     @Column(name = "re_email", nullable = true)
     public String Email;
 
-    @JsonIgnore
+    @JsonIgnoreProperties("user")
     @OneToMany(mappedBy = "ByUser")
     public Set<Card> CreatedCards;
 
