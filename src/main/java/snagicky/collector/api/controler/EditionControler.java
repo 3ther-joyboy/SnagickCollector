@@ -19,7 +19,7 @@ public class EditionControler {
     @Autowired
     EditionRepo er;
 
-    @PostMapping("/create/{Name}")
+    @PostMapping("/{Name}/")
     public ResponseEntity.BodyBuilder CreateEdition(
             @PathVariable("Name") String name,
             @RequestHeader() UUID code
@@ -28,6 +28,31 @@ public class EditionControler {
             Edition obj = new Edition();
             obj.Name = name;
             er.save(obj);
+            return ResponseEntity.status(200);
+        } else
+            return ResponseEntity.status(403);
+    }
+    @PutMapping("/{id}/{name}/")
+    public ResponseEntity.BodyBuilder DeleteEdition(
+            @PathVariable("id") Long id,
+            @PathVariable("name") String name,
+            @RequestHeader() UUID code
+    ) {
+        if (tr.TokenFromUUID(code).CreateCards) {
+            Edition e = er.findById(id).get();
+            e.Name = name;
+            er.save(e);
+            return ResponseEntity.status(200);
+        } else
+            return ResponseEntity.status(403);
+    }
+    @DeleteMapping("/{id}/")
+    public ResponseEntity.BodyBuilder DeleteEdition(
+            @PathVariable("id") Long id,
+            @RequestHeader() UUID code
+    ) {
+        if (tr.TokenFromUUID(code).CreateCards) {
+            tr.deleteById(id);
             return ResponseEntity.status(200);
         } else
             return ResponseEntity.status(403);

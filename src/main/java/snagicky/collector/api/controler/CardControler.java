@@ -117,7 +117,7 @@ public class CardControler {
         }
         return ResponseEntity.status(403);
     }
-    @PutMapping("/edition/{card_id}/{edition_id}")
+    @PostMapping("/edition/{card_id}/{edition_id}")
     public ResponseEntity.BodyBuilder AddToEdition(
             @RequestHeader("token") UUID token,
             @PathVariable("edition_id") Long edition,
