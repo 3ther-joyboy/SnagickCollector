@@ -1,5 +1,6 @@
 package snagicky.collector.api.controler;
 
+import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,9 +19,9 @@ public class EditionControler {
     @Autowired
     EditionRepo er;
 
-    @PostMapping("/create/{partm}")
+    @PostMapping("/create/{Name}")
     public ResponseEntity.BodyBuilder CreateEdition(
-            @RequestParam("parm") String name,
+            @PathVariable("Name") String name,
             @RequestHeader() UUID code
     ) {
         if (tr.TokenFromUUID(code).CreateCards) {

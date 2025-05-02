@@ -1,11 +1,9 @@
 package snagicky.collector.api.controler;
 
-import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import snagicky.collector.api.model.Card;
-import snagicky.collector.api.model.Edition;
 import snagicky.collector.api.model.Token;
 import snagicky.collector.api.model.User;
 import snagicky.collector.api.repo.CardRepo;
@@ -13,7 +11,6 @@ import snagicky.collector.api.repo.EditionRepo;
 import snagicky.collector.api.repo.TokenRepo;
 import snagicky.collector.api.repo.UserRepo;
 
-import java.net.http.HttpResponse;
 import java.util.Set;
 import java.util.UUID;
 
@@ -31,8 +28,8 @@ public class CardControler {
 
     @GetMapping("/{state}/{id}")
     public Set<User> CardOwnedUsers(
-            @PathParam("state") CardAction action,
-            @PathParam("id") Long card_id
+            @PathVariable("state") CardAction action,
+            @PathVariable("id") Long card_id
     ){
         if(action == CardAction.Own)
             return cr.findById(card_id).get().OwnedBy;
@@ -47,7 +44,7 @@ public class CardControler {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity.BodyBuilder RemoveCard(
             @RequestHeader("token") UUID token,
-            @PathParam("id") Long card
+            @PathVariable("id") Long card
             ) {
         if(tr.TokenExists(token)==1) {
             Token t = tr.TokenFromUUID(token);
@@ -105,8 +102,8 @@ public class CardControler {
     @DeleteMapping("/edition/{card_id}/{edition_id}")
     public ResponseEntity.BodyBuilder RemoveFromEdition(
             @RequestHeader("token") UUID token,
-            @PathParam("edition_id") Long edition,
-            @PathParam("card_id") Long card
+            @PathVariable("edition_id") Long edition,
+            @PathVariable("card_id") Long card
     ) {
 
         if(tr.TokenExists(token)==1) {
@@ -123,8 +120,8 @@ public class CardControler {
     @PutMapping("/edition/{card_id}/{edition_id}")
     public ResponseEntity.BodyBuilder AddToEdition(
             @RequestHeader("token") UUID token,
-            @PathParam("edition_id") Long edition,
-            @PathParam("card_id") Long card
+            @PathVariable("edition_id") Long edition,
+            @PathVariable("card_id") Long card
     ) {
 
         if(tr.TokenExists(token)==1) {
