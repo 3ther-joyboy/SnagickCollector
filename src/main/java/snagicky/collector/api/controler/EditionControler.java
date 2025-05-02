@@ -4,10 +4,12 @@ import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import snagicky.collector.api.model.Card;
 import snagicky.collector.api.model.Edition;
 import snagicky.collector.api.repo.EditionRepo;
 import snagicky.collector.api.repo.TokenRepo;
 
+import java.util.Set;
 import java.util.UUID;
 
 @RestController()
@@ -19,6 +21,10 @@ public class EditionControler {
     @Autowired
     EditionRepo er;
 
+    @GetMapping("/")
+    public Iterable<Edition> GetAll(){
+        return er.findAll();
+    }
     @PostMapping("/{Name}/")
     public ResponseEntity.BodyBuilder CreateEdition(
             @PathVariable("Name") String name,
