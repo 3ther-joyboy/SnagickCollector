@@ -172,9 +172,15 @@ public class UserControler {
         }
     }
     @DeleteMapping("/quit/")
-    public void DeleteAllTokens( @RequestHeader("token") UUID t){
+    public void DeleteAllTokens(
+            @RequestHeader("token") UUID t,
+            @RequestHeader(required = false, value = "id") Long Id
+    ){
         if(tr.TokenExists(t) == 1)
-            tr.LogOutAll(tr.TokenFromUUID(t).User.Id);
+            if (Id != null && tr.TokenFromUUID(t).EditLower && ur.findById(Id).get().Perrmission < tr.TokenFromUUID(t).User.Perrmission)
+                tr.LogOutAll(Id);
+            else
+                tr.LogOutAll(tr.TokenFromUUID(t).User.Id);
     }
     @DeleteMapping("/logout/")
     public void DeleteTokens( @RequestHeader("token") UUID t){
