@@ -82,7 +82,7 @@ public class UserControler {
     @GetMapping("/password/")
     public UUID ResetPasswordToken(
             @RequestHeader("token") UUID token,
-            @RequestHeader("password") String password
+            @RequestHeader(required = false,value = "password") String password
     ) {
         User u = tr.TokenFromUUID(token).User;
         if (password != null){return null;} // TODO send email with password reset token
