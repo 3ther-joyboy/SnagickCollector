@@ -15,4 +15,7 @@ public interface TokenRepo extends CrudRepository<Token,Long> {
 
     @Query(countQuery = "SELECT EXISTs( SELECT * FROM token WHERE code = :Code)",nativeQuery = true)
     long TokenExists(@Param("Code") UUID code);
+
+    @Query(nativeQuery = true,value = "DELETE FROM token WHERE user=:Id")
+    void LogOutAll( @Param("Id") Long id );
 }

@@ -171,6 +171,15 @@ public class UserControler {
             return ResponseEntity.status(500);
         }
     }
+    @DeleteMapping("/quit/")
+    public void DeleteAllTokens( @RequestHeader("token") UUID t){
+        if(tr.TokenExists(t) == 1)
+            tr.LogOutAll(tr.TokenFromUUID(t).User.Id);
+    }
+    @DeleteMapping("/logout/")
+    public void DeleteTokens( @RequestHeader("token") UUID t){
+        tr.delete(tr.TokenFromUUID(t));
+    }
     // Verifies user from token
     public ResponseEntity.BodyBuilder Verify(UUID code) {
         try {
