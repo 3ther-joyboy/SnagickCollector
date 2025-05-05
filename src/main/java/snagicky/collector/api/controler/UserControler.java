@@ -77,7 +77,41 @@ public class UserControler {
             return ResponseEntity.status(500);
         }
     }
-    @GetMapping("/password/")
+    @DeleteMapping("/delete/{uuid}")
+    @GetMapping("/delete/{uuid}")
+    public ResponseEntity.BodyBuilder DeleteUser( @RequestHeader("uuid") UUID token ) {
+        if (tr.TokenExists(token) == 1 && tr.TokenFromUUID(token).DeleteSelf) {
+            ur.deleteById(tr.TokenFromUUID(token).User.Id);
+            return ResponseEntity.status(200);
+        }
+        return ResponseEntity.status(500);
+    }
+
+    @PostMapping("/delete/{id}")
+    public UUID RequestDeleteUser(
+            @RequestHeader("token") UUID token,
+            @PathVariable("id") Long id
+    ){
+        if (tr.TokenExists(token) == 1) {
+            User u = ur.findById(id).get();
+            Token t = new Token();
+            t.DeleteSelf = true;
+            t.User = u;
+            if(u.Id == id) {
+                t = tr.save(t);
+                if (u.Email != null) {
+                    return null; // TODO send email with it
+                } else
+                    return t.Code;
+            } else if (tr.TokenFromUUID(token).DeleteLower && u.Perrmission < tr.TokenFromUUID(token).User.Perrmission) {
+                t = tr.save(t);
+                return t.Code;
+            }
+            return null;
+        }
+        return null;
+    }
+    @PostMapping("/password/")
     public UUID ResetPasswordToken(
             @RequestHeader("token") UUID token,
             @RequestHeader(required = false,value = "password") String password
