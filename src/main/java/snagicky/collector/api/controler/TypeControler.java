@@ -82,5 +82,34 @@ public class TypeControler {
         }
         return ResponseEntity.status(500);
     }
+    @DeleteMapping("subtype/{id}")
+    public ResponseEntity.BodyBuilder RemoveSub(
+            @PathVariable("id") Long id,
+            @RequestHeader("token") UUID token
+    ){
+        if(tr.TokenExists(token)==1) {
+            Token t = tr.TokenFromUUID(token);
+            if (t.CreateCards) {
+
+                sr.deleteById(id);
+                return ResponseEntity.status(200);
+            }
+        }
+        return ResponseEntity.status(500);
+    }
+    @DeleteMapping("type/{id}")
+    public ResponseEntity.BodyBuilder RemoveType(
+            @PathVariable("id") Long id,
+            @RequestHeader("token") UUID token
+    ){
+        if(tr.TokenExists(token)==1) {
+            Token t = tr.TokenFromUUID(token);
+            if (t.CreateCards) {
+                Tr.deleteById(id);
+                return ResponseEntity.status(200);
+            }
+        }
+        return ResponseEntity.status(500);
+    }
 
 }
