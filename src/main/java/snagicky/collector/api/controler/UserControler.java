@@ -80,7 +80,7 @@ public class UserControler {
     @DeleteMapping("/delete/{uuid}")
     @GetMapping("/delete/{uuid}")
     public ResponseEntity.BodyBuilder DeleteUser( @RequestHeader("uuid") UUID token ) {
-        if (tr.TokenExists(token) == 1 && tr.findById(token).get().DeleteSelf) {
+        if (tr.existsById(token) && tr.findById(token).get().DeleteSelf) {
             ur.deleteById(tr.findById(token).get().User.Id);
             return ResponseEntity.status(200);
         }
@@ -92,7 +92,7 @@ public class UserControler {
             @RequestHeader("token") UUID token,
             @PathVariable("id") Long id
     ){
-        if (tr.TokenExists(token) == 1) {
+        if (tr.existsById(token)) {
             User u = ur.findById(id).get();
             Token t = new Token();
             t.DeleteSelf = true;
@@ -208,7 +208,7 @@ public class UserControler {
             @RequestHeader("token") UUID t,
             @RequestHeader(required = false, value = "id") Long Id
     ){
-        if(tr.TokenExists(t) == 1)
+        if(tr.existsById(t))
             if (Id != null && tr.findById(t).get().EditLower && ur.findById(Id).get().Perrmission < tr.findById(t).get().User.Perrmission)
                 tr.LogOutAll(Id);
             else

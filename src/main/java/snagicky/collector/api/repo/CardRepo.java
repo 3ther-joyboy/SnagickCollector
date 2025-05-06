@@ -101,9 +101,4 @@ public interface CardRepo extends CrudRepository<Card,Long> {
             @Param("Offset") Integer offset,
             @Param("Limit") Integer limit
     );
-
-    // i am sorry, i trully dont know how to fix this, ill look for more
-
-    //
-    List<Card> FindCard(List<String> Arguments);
 }

@@ -46,7 +46,7 @@ public class CardControler {
             @RequestHeader("token") UUID token,
             @PathVariable("id") Long card
             ) {
-        if(tr.TokenExists(token)==1) {
+        if(tr.existsById(token)) {
             Token t = tr.findById(token).get();
             if (t.EditCards) {
                 cr.findById(card);
@@ -62,7 +62,7 @@ public class CardControler {
             @RequestParam("card") Long card
     ){
 
-        if(tr.TokenExists(token)==1) {
+        if(tr.existsById(token)) {
             Token t = tr.findById(token).get();
             if (t.EditCards) {
                 Card c = cr.findById(card).get();
@@ -80,7 +80,7 @@ public class CardControler {
             @RequestBody() Card card
     ){
 
-        if(tr.TokenExists(token)==1) {
+        if(tr.existsById(token)) {
             Token t = tr.findById(token).get();
             if (t.CreateCards || t.CreateTestCards) {
                 card.Id = null;
@@ -106,7 +106,7 @@ public class CardControler {
             @PathVariable("card_id") Long card
     ) {
 
-        if(tr.TokenExists(token)==1) {
+        if(tr.existsById(token)) {
             Token t = tr.findById(token).get();
             if (t.EditCards) {
                 Card c = cr.findById(card).get();
@@ -124,7 +124,7 @@ public class CardControler {
             @PathVariable("card_id") Long card
     ) {
 
-        if(tr.TokenExists(token)==1) {
+        if(tr.existsById(token)) {
             Token t = tr.findById(token).get();
             if (t.EditCards) {
                 Card c = cr.findById(card).get();
