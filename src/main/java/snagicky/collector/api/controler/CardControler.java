@@ -47,7 +47,7 @@ public class CardControler {
             @PathVariable("id") Long card
             ) {
         if(tr.TokenExists(token)==1) {
-            Token t = tr.TokenFromUUID(token);
+            Token t = tr.findById(token).get();
             if (t.EditCards) {
                 cr.findById(card);
                 return ResponseEntity.status(200);
@@ -63,7 +63,7 @@ public class CardControler {
     ){
 
         if(tr.TokenExists(token)==1) {
-            Token t = tr.TokenFromUUID(token);
+            Token t = tr.findById(token).get();
             if (t.EditCards) {
                 Card c = cr.findById(card).get();
                 c.ByUser = ur.findById(user).get();
