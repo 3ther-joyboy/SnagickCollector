@@ -49,7 +49,7 @@ public class TypeControler {
             @RequestHeader("token") UUID token,
             @RequestHeader("description") String des
     ){
-        if(tr.TokenExists(token)==1) {
+        if(tr.existsById(token)) {
             Token t = tr.findById(token).get();
             if (t.CreateCards) {
                 SubType s = new SubType();
@@ -68,7 +68,7 @@ public class TypeControler {
             @RequestHeader("token") UUID token,
             @PathVariable("sub") Long sub
     ){
-        if(tr.TokenExists(token)==1) {
+        if(tr.existsById(token)) {
             Token t = tr.findById(token).get();
             if (t.CreateCards) {
                 Type typ = new Type();
@@ -86,7 +86,7 @@ public class TypeControler {
             @PathVariable("id") Long id,
             @RequestHeader("token") UUID token
     ){
-        if(tr.TokenExists(token)==1) {
+        if(tr.existsById(token)) {
             Token t = tr.findById(token).get();
             if (t.CreateCards) {
 
@@ -101,7 +101,7 @@ public class TypeControler {
             @PathVariable("id") Long id,
             @RequestHeader("token") UUID token
     ){
-        if(tr.TokenExists(token)==1) {
+        if(tr.existsById(token)) {
             Token t = tr.findById(token).get();
             if (t.CreateCards) {
                 Tr.deleteById(id);
