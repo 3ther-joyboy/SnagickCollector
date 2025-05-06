@@ -110,5 +110,4 @@ public class TypeControler {
         }
         return ResponseEntity.status(500);
     }
-
 }
