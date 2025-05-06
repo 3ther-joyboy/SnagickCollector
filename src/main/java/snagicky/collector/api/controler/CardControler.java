@@ -81,7 +81,7 @@ public class CardControler {
     ){
 
         if(tr.TokenExists(token)==1) {
-            Token t = tr.TokenFromUUID(token);
+            Token t = tr.findById(token).get();
             if (t.CreateCards || t.CreateTestCards) {
                 card.Id = null;
 
@@ -107,7 +107,7 @@ public class CardControler {
     ) {
 
         if(tr.TokenExists(token)==1) {
-            Token t = tr.TokenFromUUID(token);
+            Token t = tr.findById(token).get();
             if (t.EditCards) {
                 Card c = cr.findById(card).get();
                 c.Editions.remove(er.findById(edition).get());
@@ -125,7 +125,7 @@ public class CardControler {
     ) {
 
         if(tr.TokenExists(token)==1) {
-            Token t = tr.TokenFromUUID(token);
+            Token t = tr.findById(token).get();
             if (t.EditCards) {
                 Card c = cr.findById(card).get();
                 c.Editions.add(er.findById(edition).get());

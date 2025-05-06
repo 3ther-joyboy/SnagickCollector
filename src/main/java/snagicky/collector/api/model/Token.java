@@ -10,10 +10,6 @@ import java.util.UUID;
 @Table(name = "token")
 public class Token {
     @jakarta.persistence.Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    public long Id;
-
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "code")
     public UUID Code;

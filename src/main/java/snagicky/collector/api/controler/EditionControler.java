@@ -28,7 +28,7 @@ public class EditionControler {
             @PathVariable("Name") String name,
             @RequestHeader() UUID code
     ) {
-        if (tr.TokenFromUUID(code).CreateCards) {
+        if (tr.findById(code).get().CreateCards) {
             Edition obj = new Edition();
             obj.Name = name;
             er.save(obj);
@@ -42,7 +42,7 @@ public class EditionControler {
             @PathVariable("name") String name,
             @RequestHeader() UUID code
     ) {
-        if (tr.TokenFromUUID(code).CreateCards) {
+        if (tr.findById(code).get().CreateCards) {
             Edition e = er.findById(id).get();
             e.Name = name;
             er.save(e);
@@ -55,8 +55,8 @@ public class EditionControler {
             @PathVariable("id") Long id,
             @RequestHeader() UUID code
     ) {
-        if (tr.TokenFromUUID(code).CreateCards) {
-            tr.deleteById(id);
+        if (tr.findById(code).get().CreateCards) {
+            er.deleteById(id);
             return ResponseEntity.status(200);
         } else
             return ResponseEntity.status(403);

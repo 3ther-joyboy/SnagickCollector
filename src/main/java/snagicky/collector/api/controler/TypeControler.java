@@ -3,7 +3,6 @@ package snagicky.collector.api.controler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import snagicky.collector.api.model.Card;
 import snagicky.collector.api.model.SubType;
 import snagicky.collector.api.model.Token;
 import snagicky.collector.api.model.Type;
@@ -51,7 +50,7 @@ public class TypeControler {
             @RequestHeader("description") String des
     ){
         if(tr.TokenExists(token)==1) {
-            Token t = tr.TokenFromUUID(token);
+            Token t = tr.findById(token).get();
             if (t.CreateCards) {
                 SubType s = new SubType();
                 s.Name = name;
@@ -70,7 +69,7 @@ public class TypeControler {
             @PathVariable("sub") Long sub
     ){
         if(tr.TokenExists(token)==1) {
-            Token t = tr.TokenFromUUID(token);
+            Token t = tr.findById(token).get();
             if (t.CreateCards) {
                 Type typ = new Type();
                 typ.Name = name;
@@ -88,7 +87,7 @@ public class TypeControler {
             @RequestHeader("token") UUID token
     ){
         if(tr.TokenExists(token)==1) {
-            Token t = tr.TokenFromUUID(token);
+            Token t = tr.findById(token).get();
             if (t.CreateCards) {
 
                 sr.deleteById(id);
@@ -103,7 +102,7 @@ public class TypeControler {
             @RequestHeader("token") UUID token
     ){
         if(tr.TokenExists(token)==1) {
-            Token t = tr.TokenFromUUID(token);
+            Token t = tr.findById(token).get();
             if (t.CreateCards) {
                 Tr.deleteById(id);
                 return ResponseEntity.status(200);

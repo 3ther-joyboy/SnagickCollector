@@ -6,4 +6,5 @@ import snagicky.collector.api.model.Edition;
 
 @Repository
 public interface EditionRepo extends CrudRepository<Edition,Long> {
+
 }

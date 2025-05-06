@@ -9,10 +9,7 @@ import snagicky.collector.api.model.Token;
 import java.util.UUID;
 
 @Repository
-public interface TokenRepo extends CrudRepository<Token,Long> {
-    @Query(countQuery = "SELECT * FROM token WHERE code = :Code",nativeQuery = true)
-    Token TokenFromUUID(@Param("Code") UUID code);
-
+public interface TokenRepo extends CrudRepository<Token,UUID> {
     @Query(countQuery = "SELECT EXISTs( SELECT * FROM token WHERE code = :Code)",nativeQuery = true)
     long TokenExists(@Param("Code") UUID code);
 

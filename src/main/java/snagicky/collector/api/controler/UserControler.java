@@ -69,7 +69,7 @@ public class UserControler {
             @RequestHeader("password") String password
     ) {
         try {
-            Token t = tr.TokenFromUUID(token);
+            Token t = tr.findById(token).get();
             t.User.Password = t.User.Salt(password);
             ur.save(t.User);
             return ResponseEntity.status(200);
@@ -80,8 +80,8 @@ public class UserControler {
     @DeleteMapping("/delete/{uuid}")
     @GetMapping("/delete/{uuid}")
     public ResponseEntity.BodyBuilder DeleteUser( @RequestHeader("uuid") UUID token ) {
-        if (tr.TokenExists(token) == 1 && tr.TokenFromUUID(token).DeleteSelf) {
-            ur.deleteById(tr.TokenFromUUID(token).User.Id);
+        if (tr.TokenExists(token) == 1 && tr.findById(token).get().DeleteSelf) {
+            ur.deleteById(tr.findById(token).get().User.Id);
             return ResponseEntity.status(200);
         }
         return ResponseEntity.status(500);
@@ -103,7 +103,7 @@ public class UserControler {
                     return null; // TODO send email with it
                 } else
                     return t.Code;
-            } else if (tr.TokenFromUUID(token).DeleteLower && u.Perrmission < tr.TokenFromUUID(token).User.Perrmission) {
+            } else if (tr.findById(token).get().DeleteLower && u.Perrmission < tr.findById(token).get().User.Perrmission) {
                 t = tr.save(t);
                 return t.Code;
             }
@@ -116,7 +116,7 @@ public class UserControler {
             @RequestHeader("token") UUID token,
             @RequestHeader(required = false,value = "password") String password
     ) {
-        User u = tr.TokenFromUUID(token).User;
+        User u = tr.findById(token).get().User;
         if (password != null){return null;} // TODO send email with password reset token
         if(u.Password == u.Salt(password)){
             Token t = new Token();
@@ -149,7 +149,7 @@ public class UserControler {
             @RequestParam("id") Long card
     ){
         try{
-            User u = tr.TokenFromUUID(t).User;
+            User u = tr.findById(t).get().User;
             // :D
             (action == CardAction.Own ? u.OwnedCards : u.SavedCards ).add(cr.findById(card).get());
             ur.save(u);
@@ -166,7 +166,7 @@ public class UserControler {
             @RequestParam("id") Long card
     ){
         try{
-            User u = tr.TokenFromUUID(t).User;
+            User u = tr.findById(t).get().User;
             if(action == CardAction.Own)
                 u.OwnedCards.remove(cr.findById(card).get());
             else
@@ -187,7 +187,7 @@ public class UserControler {
             @RequestHeader(value = "user_id",required = false) Long id
     ){
         try {
-            Token token = tr.TokenFromUUID(t);
+            Token token = tr.findById(t).get();
             if (id == null || !token.EditLower)
                 id = token.User.Id;
             if (token.EditSelf || token.EditLower) {
@@ -209,19 +209,19 @@ public class UserControler {
             @RequestHeader(required = false, value = "id") Long Id
     ){
         if(tr.TokenExists(t) == 1)
-            if (Id != null && tr.TokenFromUUID(t).EditLower && ur.findById(Id).get().Perrmission < tr.TokenFromUUID(t).User.Perrmission)
+            if (Id != null && tr.findById(t).get().EditLower && ur.findById(Id).get().Perrmission < tr.findById(t).get().User.Perrmission)
                 tr.LogOutAll(Id);
             else
-                tr.LogOutAll(tr.TokenFromUUID(t).User.Id);
+                tr.LogOutAll(tr.findById(t).get().User.Id);
     }
     @DeleteMapping("/logout/")
     public void DeleteTokens( @RequestHeader("token") UUID t){
-        tr.delete(tr.TokenFromUUID(t));
+        tr.delete(tr.findById(t).get());
     }
     // Verifies user from token
     public ResponseEntity.BodyBuilder Verify(UUID code) {
         try {
-            User usr = tr.TokenFromUUID(code).User;
+            User usr = tr.findById(code).get().User;
             if (usr.Perrmission == 0) usr.Perrmission = 1;
             ur.save(usr);
             return ResponseEntity.status(200);
