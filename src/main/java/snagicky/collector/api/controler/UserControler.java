@@ -16,7 +16,7 @@ import java.util.UUID;
 
 // For not that messy saving cards
 enum CardAction {
-    Save, Own;
+    save, own;
 }
 
 @RestController()
@@ -44,14 +44,27 @@ public class UserControler {
         return new User(); // TODO everything
     }
 
+    @PostMapping("/login/{name}")
+    public UUID LoginUser(
+        @PathVariable("name") String name,
+        @RequestHeader("password") String password
+    ) {
+        if(ur.existsByName(name)) {
+            User u = ur.findByName(name).get(0);
+            if (u.CheckPassword(password))
+                return UserLoginToken(u).Code;
+            else System.out.println("Auth failed: " + u.Salt(password));
+        }
+       return null;
+    }
     @PostMapping("/create/{name}")
-    public ResponseEntity<UUID> CreateUser(
+    public UUID CreateUser(
             @PathVariable("name") String name,
             @RequestHeader("password") String password, // HEADER!!
             @RequestHeader(value = "email", defaultValue = "", required = false) String email // HEADER!!
     ) {
         User us = new User();
-        us.Name = name;
+        us.name = name;
 
         User CreatedUser = ur.save(us);
         CreatedUser.Password = CreatedUser.Salt(password);
@@ -61,7 +74,7 @@ public class UserControler {
             CreatedUser.Email = email;
         }
 
-        return ResponseEntity.ok(UserLoginToken(ur.save(CreatedUser)).Code);
+        return UserLoginToken(ur.save(CreatedUser)).Code;
     }
     @PutMapping("/password/")
     public ResponseEntity.BodyBuilder ResetPassword(
@@ -77,14 +90,10 @@ public class UserControler {
             return ResponseEntity.status(500);
         }
     }
-    @DeleteMapping("/delete/{uuid}")
-    @GetMapping("/delete/{uuid}")
-    public ResponseEntity.BodyBuilder DeleteUser( @RequestHeader("uuid") UUID token ) {
-        if (tr.existsById(token) && tr.findById(token).get().DeleteSelf) {
+    @DeleteMapping("/delete")
+    public void DeleteUser( @RequestHeader("token") UUID token ) {
+        if (tr.existsById(token) && tr.findById(token).get().DeleteSelf)
             ur.deleteById(tr.findById(token).get().User.Id);
-            return ResponseEntity.status(200);
-        }
-        return ResponseEntity.status(500);
     }
 
     @PostMapping("/delete/{id}")
@@ -118,7 +127,7 @@ public class UserControler {
     ) {
         User u = tr.findById(token).get().User;
         if (password != null){return null;} // TODO send email with password reset token
-        if(u.Password == u.Salt(password)){
+        if(u.CheckPassword(password)){
             Token t = new Token();
             t.ChangePassword = true;
             t.User = u;
@@ -134,7 +143,7 @@ public class UserControler {
     ) {
         try {
             User u = ur.findById(user).get();
-            if(action == CardAction.Own)
+            if(action == CardAction.own)
                 return u.OwnedCards;
             else
                 return u.SavedCards;
@@ -145,13 +154,13 @@ public class UserControler {
     @PostMapping("/card/{action}/{id}") // make a favorite/owned for a user
     public ResponseEntity.BodyBuilder CardSave(
             @RequestHeader("token") UUID t,
-            @RequestHeader("action") CardAction action,
+            @RequestParam("action") CardAction action,
             @RequestParam("id") Long card
     ){
         try{
             User u = tr.findById(t).get().User;
             // :D
-            (action == CardAction.Own ? u.OwnedCards : u.SavedCards ).add(cr.findById(card).get());
+            (action == CardAction.own ? u.OwnedCards : u.SavedCards ).add(cr.findById(card).get());
             ur.save(u);
 
             return ResponseEntity.status(200);
@@ -167,7 +176,7 @@ public class UserControler {
     ){
         try{
             User u = tr.findById(t).get().User;
-            if(action == CardAction.Own)
+            if(action == CardAction.own)
                 u.OwnedCards.remove(cr.findById(card).get());
             else
                 u.SavedCards.remove(cr.findById(card).get());
@@ -180,7 +189,7 @@ public class UserControler {
     }
 
     @PutMapping("/edit/")
-    public ResponseEntity.BodyBuilder EditBio(
+    public User EditBio(
             @RequestHeader("token") UUID t,
             @RequestHeader(value = "bio",required = false) String bio,
             @RequestHeader(value = "name",required = false) String name,
@@ -194,13 +203,12 @@ public class UserControler {
 
                 User usr = ur.findById(id).get();
                 if (bio != null) usr.Bio = bio;
-                if (name != null) usr.Name = name;
+                if (name != null) usr.name = name;
 
-                ur.save(usr);
-                return ResponseEntity.status(200);
-            } else return ResponseEntity.status(403);
+                return ur.save(usr);
+            } else return new User();
         } catch (Exception e) {
-            return ResponseEntity.status(500);
+            return null;
         }
     }
     @DeleteMapping("/quit/")
@@ -216,7 +224,7 @@ public class UserControler {
     }
     @DeleteMapping("/logout/")
     public void DeleteTokens( @RequestHeader("token") UUID t){
-        tr.delete(tr.findById(t).get());
+        tr.deleteById(t);
     }
     // Verifies user from token
     public ResponseEntity.BodyBuilder Verify(UUID code) {
@@ -260,6 +268,8 @@ public class UserControler {
                 {x,o,o,x,o,o,o,o,o,o,x},
         };
         Token ver = new Token();
+        ver.User = usr;
+
         ver.VerifySelf = PerrmissionsLvl[usr.Perrmission][0];
         ver.VerifyOther = PerrmissionsLvl[usr.Perrmission][1];
         ver.EditSelf = PerrmissionsLvl[usr.Perrmission][2];

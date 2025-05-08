@@ -31,7 +31,7 @@ public class CardControler {
             @PathVariable("state") CardAction action,
             @PathVariable("id") Long card_id
     ){
-        if(action == CardAction.Own)
+        if(action == CardAction.own)
             return cr.findById(card_id).get().OwnedBy;
         else
             return cr.findById(card_id).get().SavedBy;

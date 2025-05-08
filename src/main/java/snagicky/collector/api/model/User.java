@@ -18,7 +18,7 @@ public class User {
     public long Id;
 
     @Column(name = "name",unique = true, nullable = false)
-    public String Name;
+    public String name;
     @Column(name = "bio")
     public String Bio;
 
@@ -33,6 +33,14 @@ public class User {
     @JsonIgnoreProperties("user")
     @OneToMany(mappedBy = "ByUser")
     public Set<Card> CreatedCards;
+
+    @JsonIgnore
+    @OneToMany(
+            mappedBy = "User",
+            orphanRemoval = true,
+            cascade = CascadeType.ALL
+    )
+    public Set<Token> Tokens;
 
     @JsonIgnore
     @ManyToMany()
@@ -60,14 +68,16 @@ public class User {
     // Admin    = 2
     // Root     = 3 (have to be created through database)
 
+    @JsonIgnore
     @UpdateTimestamp
     public Timestamp UTime;
+    @JsonIgnore
     @CreationTimestamp
     public Timestamp CTime;
 
     public int Salt(String password) { // [CREATE YOUR OWN SALT](https://www.youtube.com/watch?v=8ZtInClXe1Q)
         // this is place holder
-        String StringPassword = Name + password + CTime + "PlaceForEnvironmentVariable";
+        String StringPassword = name + password + CTime + "PlaceForEnvironmentVariable";
         return StringPassword.hashCode();
     }
     public boolean CheckPassword(String password){
