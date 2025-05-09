@@ -2,6 +2,8 @@ package snagicky.collector.api.controler;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
 import snagicky.collector.api.model.Card;
 import snagicky.collector.api.model.Token;
@@ -28,6 +30,10 @@ public class UserControler {
     TokenRepo tr;
     @Autowired
     CardRepo cr;
+
+    //Email
+    @Autowired
+    JavaMailSender emailSender;
 
     @GetMapping("/{id}")
     public User FindUser(@PathVariable("id") long id){
@@ -69,12 +75,42 @@ public class UserControler {
         User CreatedUser = ur.save(us);
         CreatedUser.Password = CreatedUser.Salt(password);
 
-        if (!email.isEmpty()) {
-            // TODO sends email with verivication
+        if (!email.isEmpty())
             CreatedUser.Email = email;
-        }
 
-        return UserLoginToken(ur.save(CreatedUser)).Code;
+        CreatedUser = ur.save(CreatedUser);
+
+        if (!email.isEmpty())
+            SendVerifiEmail(CreatedUser);
+
+        return UserLoginToken(CreatedUser).Code;
+    }
+    private void SendVerifiEmail(User u){
+        Token t = new Token();
+        t.VerifySelf = true;
+        t.User = u;
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("noreplay@gmail.com");
+        message.setTo(u.Email);
+        message.setSubject("Verification Email for Snagick database");
+
+        message.setText("http://3ther.org:8080/api/user/verifi/" + tr.save(t).Code);
+        emailSender.send(message);
+    }
+    @GetMapping("/verifi/{token}")
+    public boolean VerifiUser(@PathVariable("token") UUID t) {
+        if(tr.existsById(t) && tr.findById(t).get().VerifySelf) {
+            User u = tr.findById(t).get().User;
+            if(u.Perrmission == 0) {
+                u.Perrmission = 1;
+                ur.save(u);
+                DeleteAllTokens(t,null);
+
+                return true;
+            }
+        }
+        return false;
     }
     @PutMapping("/password/")
     public ResponseEntity.BodyBuilder ResetPassword(

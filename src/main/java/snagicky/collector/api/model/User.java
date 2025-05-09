@@ -78,7 +78,9 @@ public class User {
     public int Salt(String password) { // [CREATE YOUR OWN SALT](https://www.youtube.com/watch?v=8ZtInClXe1Q)
         // this is place holder
         String StringPassword = name + password + CTime + "PlaceForEnvironmentVariable";
-        return StringPassword.hashCode();
+        int out = StringPassword.hashCode();
+        System.out.println(out);
+        return out;
     }
     public boolean CheckPassword(String password){
         return (Password == Salt(password));
