@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import snagicky.collector.api.model.*;
 
+import java.util.HashSet;
+
 @RestController()
 @RequestMapping("/test")
 public class TestRestControler {
@@ -48,6 +50,8 @@ public class TestRestControler {
         c.Story=":3";
 
         c.type = gettype();
+
+        c.Editions=new HashSet<>();
         c.Editions.add(getedition(1L));
         c.ByUser=getuser();
 
