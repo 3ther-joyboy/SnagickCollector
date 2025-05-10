@@ -6,11 +6,9 @@ import org.springframework.web.bind.annotation.*;
 import snagicky.collector.api.model.Card;
 import snagicky.collector.api.model.Token;
 import snagicky.collector.api.model.User;
-import snagicky.collector.api.repo.CardRepo;
-import snagicky.collector.api.repo.EditionRepo;
-import snagicky.collector.api.repo.TokenRepo;
-import snagicky.collector.api.repo.UserRepo;
+import snagicky.collector.api.repo.*;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -23,6 +21,8 @@ public class CardControler {
     UserRepo ur;
     @Autowired
     EditionRepo er;
+    @Autowired
+    TypeRepo Tr;
     @Autowired
     TokenRepo tr;
 
@@ -42,7 +42,7 @@ public class CardControler {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity.BodyBuilder RemoveCard(
+    public boolean RemoveCard(
             @RequestHeader("token") UUID token,
             @PathVariable("id") Long card
             ) {
@@ -50,13 +50,13 @@ public class CardControler {
             Token t = tr.findById(token).get();
             if (t.EditCards) {
                 cr.findById(card);
-                return ResponseEntity.status(200);
+                return true;
             }
         }
-        return ResponseEntity.status(403);
+        return false;
     }
     @PutMapping("/ownership/")
-    public ResponseEntity.BodyBuilder EditCard(
+    public boolean EditCard(
             @RequestHeader("token") UUID token,
             @RequestParam("user") Long user,
             @RequestParam("card") Long card
@@ -68,15 +68,16 @@ public class CardControler {
                 Card c = cr.findById(card).get();
                 c.ByUser = ur.findById(user).get();
                 cr.save(c);
-                return ResponseEntity.status(200);
+                return true;
             }
         }
-        return ResponseEntity.status(403);
+        return false;
     }
     @PostMapping("/create/")
-    public ResponseEntity.BodyBuilder AddCard(
+    public Card AddCard(
             @RequestHeader("token") UUID token,
-            @RequestParam(name = "edition_id",required = false) Long edition,
+            @RequestHeader(name = "edition_id",required = false) Long edition,
+            @RequestHeader(name = "type_id") Long type,
             @RequestBody() Card card
     ){
 
@@ -84,23 +85,23 @@ public class CardControler {
             Token t = tr.findById(token).get();
             if (t.CreateCards || t.CreateTestCards) {
                 card.Id = null;
+                card.ByUser = t.User;
+                card.type = Tr.findById(type).get();
 
                 // Edition stuff
-                if(edition == null || !t.CreateCards)
-                    card.Editions.add(er.findById(1L).get());
-                else
+                if(edition != null && t.CreateCards) {
+                    card.Editions = new HashSet<>();
                     card.Editions.add(er.findById(edition).get());
+                }
 
-                card.ByUser = t.User;
 
-                cr.save(card);
-                return ResponseEntity.status(200);
+                return cr.save(card);
             }
         }
-        return ResponseEntity.status(403);
+        return null;
     }
     @DeleteMapping("/edition/{card_id}/{edition_id}")
-    public ResponseEntity.BodyBuilder RemoveFromEdition(
+    public boolean RemoveFromEdition(
             @RequestHeader("token") UUID token,
             @PathVariable("edition_id") Long edition,
             @PathVariable("card_id") Long card
@@ -112,13 +113,13 @@ public class CardControler {
                 Card c = cr.findById(card).get();
                 c.Editions.remove(er.findById(edition).get());
                 cr.save(c);
-                return ResponseEntity.status(200);
+                return true;
             }
         }
-        return ResponseEntity.status(403);
+        return false;
     }
     @PostMapping("/edition/{card_id}/{edition_id}")
-    public ResponseEntity.BodyBuilder AddToEdition(
+    public boolean AddToEdition(
             @RequestHeader("token") UUID token,
             @PathVariable("edition_id") Long edition,
             @PathVariable("card_id") Long card
@@ -130,9 +131,9 @@ public class CardControler {
                 Card c = cr.findById(card).get();
                 c.Editions.add(er.findById(edition).get());
                 cr.save(c);
-                return ResponseEntity.status(200);
+                return true;
             }
         }
-        return ResponseEntity.status(403);
+        return false;
     }
 }

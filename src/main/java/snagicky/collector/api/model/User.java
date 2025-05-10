@@ -30,7 +30,7 @@ public class User {
     @Column(name = "re_email", nullable = true)
     public String Email;
 
-    @JsonIgnoreProperties("user")
+    @JsonIgnoreProperties("ByUser")
     @OneToMany(mappedBy = "ByUser")
     public Set<Card> CreatedCards;
 
@@ -80,7 +80,6 @@ public class User {
         CTime.setNanos(0); // It does this somewhere so password when creating the user is different then loging in after
         String StringPassword = name + password + CTime + "PlaceForEnvironmentVariable";
         int out = StringPassword.hashCode();
-        System.out.println(out);
         return out;
     }
     public boolean CheckPassword(String password){

@@ -23,7 +23,7 @@ public class Card {
     @UpdateTimestamp
     private java.sql.Timestamp Updated;
 
-    @JsonIgnoreProperties("card")
+    @JsonIgnoreProperties("CreatedCards")
     @ManyToOne
     @JoinColumn(name = "created_by",nullable = false)
     public User ByUser;

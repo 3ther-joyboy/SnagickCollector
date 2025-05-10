@@ -24,42 +24,40 @@ public class EditionControler {
         return er.findAll();
     }
     @PostMapping("/{Name}/")
-    public ResponseEntity.BodyBuilder CreateEdition(
+    public Edition CreateEdition(
             @PathVariable("Name") String name,
-            @RequestHeader() UUID code
+            @RequestHeader("token") UUID code
     ) {
         if (tr.findById(code).get().CreateCards) {
             Edition obj = new Edition();
             obj.Name = name;
-            er.save(obj);
-            return ResponseEntity.status(200);
+            return er.save(obj);
         } else
-            return ResponseEntity.status(403);
+            return null;
     }
     @PutMapping("/{id}/{name}/")
-    public ResponseEntity.BodyBuilder DeleteEdition(
+    public Edition RenameEdition(
             @PathVariable("id") Long id,
             @PathVariable("name") String name,
-            @RequestHeader() UUID code
+            @RequestHeader("token") UUID code
     ) {
         if (tr.findById(code).get().CreateCards) {
             Edition e = er.findById(id).get();
             e.Name = name;
-            er.save(e);
-            return ResponseEntity.status(200);
+            return er.save(e);
         } else
-            return ResponseEntity.status(403);
+            return null;
     }
     @DeleteMapping("/{id}/")
-    public ResponseEntity.BodyBuilder DeleteEdition(
+    public boolean DeleteEdition(
             @PathVariable("id") Long id,
-            @RequestHeader() UUID code
+            @RequestHeader("token") UUID code
     ) {
         if (tr.findById(code).get().CreateCards) {
             er.deleteById(id);
-            return ResponseEntity.status(200);
+            return true;
         } else
-            return ResponseEntity.status(403);
+            return false;
     }
 }
 

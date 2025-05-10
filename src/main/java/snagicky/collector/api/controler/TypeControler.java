@@ -44,7 +44,7 @@ public class TypeControler {
         return sr.FindSubType(id,name,des,page,scroll);
     }
     @PostMapping("subtype/{Name}")
-    public ResponseEntity.BodyBuilder AddSub(
+    public SubType AddSub(
             @PathVariable("Name") String name,
             @RequestHeader("token") UUID token,
             @RequestHeader("description") String des
@@ -56,14 +56,13 @@ public class TypeControler {
                 s.Name = name;
                 s.Description = des;
 
-                sr.save(s);
-                return ResponseEntity.status(200);
+                return sr.save(s);
             }
         }
-        return ResponseEntity.status(500);
+        return null;
     }
     @PostMapping("type/{Name}/{sub}")
-    public ResponseEntity.BodyBuilder AddType(
+    public Type AddType(
             @PathVariable("Name") String name,
             @RequestHeader("token") UUID token,
             @PathVariable("sub") Long sub
@@ -75,14 +74,13 @@ public class TypeControler {
                 typ.Name = name;
                 typ.subType = sr.findById(sub).get();
 
-                Tr.save(typ);
-                return ResponseEntity.status(200);
+                return Tr.save(typ);
             }
         }
-        return ResponseEntity.status(500);
+        return null;
     }
     @DeleteMapping("subtype/{id}")
-    public ResponseEntity.BodyBuilder RemoveSub(
+    public boolean RemoveSub(
             @PathVariable("id") Long id,
             @RequestHeader("token") UUID token
     ){
@@ -91,13 +89,13 @@ public class TypeControler {
             if (t.CreateCards) {
 
                 sr.deleteById(id);
-                return ResponseEntity.status(200);
+                return true;
             }
         }
-        return ResponseEntity.status(500);
+        return false;
     }
     @DeleteMapping("type/{id}")
-    public ResponseEntity.BodyBuilder RemoveType(
+    public boolean RemoveType(
             @PathVariable("id") Long id,
             @RequestHeader("token") UUID token
     ){
@@ -105,9 +103,9 @@ public class TypeControler {
             Token t = tr.findById(token).get();
             if (t.CreateCards) {
                 Tr.deleteById(id);
-                return ResponseEntity.status(200);
+                return true;
             }
         }
-        return ResponseEntity.status(500);
+        return false;
     }
 }
