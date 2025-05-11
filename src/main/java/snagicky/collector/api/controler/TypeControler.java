@@ -47,7 +47,7 @@ public class TypeControler {
     public SubType AddSub(
             @PathVariable("Name") String name,
             @RequestHeader("token") UUID token,
-            @RequestHeader("description") String des
+            @RequestBody() String des
     ){
         if(tr.existsById(token)) {
             Token t = tr.findById(token).get();
