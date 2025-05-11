@@ -1,6 +1,9 @@
 package snagicky.collector.api.controler;
 
+import jakarta.persistence.criteria.Order;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.JpaSort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import snagicky.collector.api.model.Card;
@@ -8,9 +11,7 @@ import snagicky.collector.api.model.Token;
 import snagicky.collector.api.model.User;
 import snagicky.collector.api.repo.*;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @RestController()
 @RequestMapping("/api/card")
@@ -26,6 +27,12 @@ public class CardControler {
     @Autowired
     TokenRepo tr;
 
+    @GetMapping("/")
+    public Iterable<Card> FindCard(
+            @RequestParam Map<String,String> allParams
+    ){
+        return cr.findCardAdvanced(allParams);
+    }
     @GetMapping("/{state}/{id}")
     public Set<User> CardOwnedUsers(
             @PathVariable("state") CardAction action,
