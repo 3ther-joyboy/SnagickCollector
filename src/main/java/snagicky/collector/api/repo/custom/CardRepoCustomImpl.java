@@ -22,21 +22,10 @@ public class CardRepoCustomImpl implements CardRepoCustom{
         Root<Card> root = query.from(Card.class);
         List<Predicate> predicates = new ArrayList<>();
 
-        // search[something]
-        // equals[something]
-        // higher[something]
-        // lower[something]
-        // not[something]
-
-        // page
-        // size
-        // sort
-        // rsort
-
         int Page = 0;
         int PageSize = 20;
         Order order = cb.asc(root.get("id"));
-
+        Predicate edition = cb.isNotEmpty(root.get("Editions"));
 
         for (Map.Entry<String,String> i : param.entrySet()){
             switch (i.getKey()) {
@@ -51,6 +40,16 @@ public class CardRepoCustomImpl implements CardRepoCustom{
                     break;
                 case "size":
                     PageSize = Integer.parseInt(i.getValue());
+                    break;
+                case "type":
+                    predicates.add(cb.equal(root.get("type").get("Id"),i.getValue()));
+                    break;
+                case "edition":
+                    System.out.println(i.getValue());
+                    if(i.getValue().isEmpty())
+                        edition = cb.isEmpty(root.get("Editions"));
+                    else
+                        edition = cb.equal(root.get("Editions").get("Id"),i.getValue());
                     break;
 
                 default:
@@ -82,6 +81,8 @@ public class CardRepoCustomImpl implements CardRepoCustom{
                 }
             }
         }
+        predicates.add(edition); // default query is not to search for edition less cards (created bz not admins)
+
         // To array bs
         Predicate[] whereQuer = new Predicate[predicates.size()];
         for (int i = 0; i < predicates.size(); i++)

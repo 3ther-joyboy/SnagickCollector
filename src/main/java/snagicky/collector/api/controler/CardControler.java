@@ -7,6 +7,7 @@ import org.springframework.data.jpa.domain.JpaSort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import snagicky.collector.api.model.Card;
+import snagicky.collector.api.model.Edition;
 import snagicky.collector.api.model.Token;
 import snagicky.collector.api.model.User;
 import snagicky.collector.api.repo.*;
@@ -33,7 +34,7 @@ public class CardControler {
     ){
         return cr.findCardAdvanced(allParams);
     }
-    @GetMapping("/{state}/{id}")
+    @GetMapping("/{state}/{id}") // TODO test this
     public Set<User> CardOwnedUsers(
             @PathVariable("state") CardAction action,
             @PathVariable("id") Long card_id
@@ -43,7 +44,7 @@ public class CardControler {
         else
             return cr.findById(card_id).get().SavedBy;
     }
-    @GetMapping("/all/")
+    @GetMapping("/all/") // TODO remove this at some point
     public Iterable<Card> GetAll() {
         return cr.findAll();
     }
@@ -108,7 +109,7 @@ public class CardControler {
         return null;
     }
     @DeleteMapping("/edition/{card_id}/{edition_id}")
-    public boolean RemoveFromEdition(
+    public Card RemoveFromEdition(
             @RequestHeader("token") UUID token,
             @PathVariable("edition_id") Long edition,
             @PathVariable("card_id") Long card
@@ -117,16 +118,17 @@ public class CardControler {
         if(tr.existsById(token)) {
             Token t = tr.findById(token).get();
             if (t.EditCards) {
+                Edition e = er.findById(edition).get();
                 Card c = cr.findById(card).get();
-                c.Editions.remove(er.findById(edition).get());
-                cr.save(c);
-                return true;
+                e.Cards.remove(c);
+                er.save(e);
+                return cr.findById(card).get();
             }
         }
-        return false;
+        return null;
     }
     @PostMapping("/edition/{card_id}/{edition_id}")
-    public boolean AddToEdition(
+    public Card AddToEdition(
             @RequestHeader("token") UUID token,
             @PathVariable("edition_id") Long edition,
             @PathVariable("card_id") Long card
@@ -135,12 +137,13 @@ public class CardControler {
         if(tr.existsById(token)) {
             Token t = tr.findById(token).get();
             if (t.EditCards) {
+                Edition e = er.findById(edition).get();
                 Card c = cr.findById(card).get();
-                c.Editions.add(er.findById(edition).get());
-                cr.save(c);
-                return true;
+                e.Cards.add(c);
+                er.save(e);
+                return cr.findById(card).get();
             }
         }
-        return false;
+        return null;
     }
 }
