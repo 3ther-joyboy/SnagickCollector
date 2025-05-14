@@ -17,7 +17,7 @@ import java.util.Set;
 import java.util.UUID;
 
 // For not that messy saving cards
-enum CardAction {
+enum CardAction { // TODO fix this.. this is not working
     save, own;
 }
 
