@@ -78,7 +78,7 @@ public class User {
     public int Salt(String password) { // [CREATE YOUR OWN SALT](https://www.youtube.com/watch?v=8ZtInClXe1Q)
         // this is place holder
         CTime.setNanos(0); // It does this somewhere so password when creating the user is different then loging in after
-        String StringPassword = name + password + CTime + "PlaceForEnvironmentVariable";
+        String StringPassword = password + CTime + "PlaceForEnvironmentVariable";
         int out = StringPassword.hashCode();
         return out;
     }

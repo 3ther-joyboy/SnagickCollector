@@ -70,12 +70,17 @@ public class CardRepoCustomImpl implements CardRepoCustom{
                     ));
                 } else if (Pattern.matches("lower_.*", i.getKey())) {
                     predicates.add(cb.lessThan(
-                            root.get(ParseAway("lower", i.getKey())),
+                            root.get(ParseAway("lower", i.getKey())).get("Id"),
                             i.getValue()
                     ));
                 } else if (Pattern.matches("not_.*", i.getKey())) {
                     predicates.add(cb.notEqual(
                             root.get(ParseAway("not", i.getKey())),
+                            i.getValue()
+                    ));
+                } else if (Pattern.matches("link_.*", i.getKey())) {
+                    predicates.add(cb.notEqual(
+                            root.get(ParseAway("link", i.getKey())),
                             i.getValue()
                     ));
                 }

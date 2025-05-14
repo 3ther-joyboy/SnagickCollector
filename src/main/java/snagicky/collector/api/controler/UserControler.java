@@ -41,13 +41,8 @@ public class UserControler {
     }
 
     @GetMapping("/")
-    public User FindUser(
-            @RequestParam(value = "name",required = false) String name,
-            @RequestParam(value = "id",required = false) long id,
-            @RequestParam(value = "bio",required = false) String bio,
-            @RequestParam(value = "card_owned",required = false) List<Long> card
-    ){
-        return new User(); // TODO everything
+    public Iterable<User> FindUser(){
+        return ur.findAll();
     }
 
     @PostMapping("/login/{name}")
@@ -112,22 +107,8 @@ public class UserControler {
         }
         return false;
     }
-    @PutMapping("/password/")
-    public ResponseEntity.BodyBuilder ResetPassword(
-            @RequestHeader("token") UUID token,
-            @RequestHeader("password") String password
-    ) {
-        try {
-            Token t = tr.findById(token).get();
-            t.User.Password = t.User.Salt(password);
-            ur.save(t.User);
-            return ResponseEntity.status(200);
-        } catch (Exception e) {
-            return ResponseEntity.status(500);
-        }
-    }
-    @DeleteMapping("/delete")
-    public void DeleteUser( @RequestHeader("token") UUID token ) {
+    @DeleteMapping("/delete/{token}")
+    public void DeleteUser( @PathVariable("token") UUID token ) {
         if (tr.existsById(token) && tr.findById(token).get().DeleteSelf)
             ur.deleteById(tr.findById(token).get().User.Id);
     }
@@ -145,7 +126,8 @@ public class UserControler {
             if(u.Id == id) {
                 t = tr.save(t);
                 if (u.Email != null) {
-                    return null; // TODO send email with it
+                    SendDeletionEmail(u);
+                    return null;
                 } else
                     return t.Code;
             } else if (tr.findById(token).get().DeleteLower && u.Perrmission < tr.findById(token).get().User.Perrmission) {
@@ -155,6 +137,33 @@ public class UserControler {
             return null;
         }
         return null;
+    }
+    private void SendDeletionEmail(User u){
+        Token t = new Token();
+        t.DeleteSelf = true;
+        t.User = u;
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("noreplay@gmail.com");
+        message.setTo(u.Email);
+        message.setSubject("Deletion Email for Snagick database");
+
+        message.setText("http://3ther.org:8080/api/user/delete/" + tr.save(t).Code);
+        emailSender.send(message);
+    }
+    @PutMapping("/changepassword/")
+    public boolean ResetPassword(
+            @RequestHeader("token") UUID token,
+            @RequestHeader(value = "password") String password
+    ){
+        if(tr.existsById(token) && tr.findById(token).get().ChangePassword) {
+            User u = tr.findById(token).get().User;
+            u.Password = u.Salt(password);
+            ur.save(u);
+            tr.deleteById(token);
+            return true;
+        }
+        return false;
     }
     @PostMapping("/password/")
     public UUID ResetPasswordToken(
@@ -171,7 +180,6 @@ public class UserControler {
         }
         return null;
     }
-    // TODO allow admins edit bunch of stuff here
     @GetMapping("/card/{action}/{id}") // Favs/Owned of a user
     public Set<Card> GetSavedCards(
             @RequestHeader("action") CardAction action,
