@@ -56,7 +56,7 @@ public class CardRepoCustomImpl implements CardRepoCustom{
                 if (Pattern.matches("search_.*", i.getKey())) {
                     predicates.add(cb.like(
                             root.get(ParseAway("search", i.getKey())),
-                            i.getValue()
+                            "%" + i.getValue() + "%"
                     ));
                 } else if (Pattern.matches("equals_.*", i.getKey())) {
                     predicates.add(cb.equal(
@@ -80,8 +80,8 @@ public class CardRepoCustomImpl implements CardRepoCustom{
                     ));
                 } else if (Pattern.matches("link_.*", i.getKey())) {
                     predicates.add(cb.notEqual(
-                            root.get(ParseAway("link", i.getKey())),
-                            i.getValue()
+                            root.get(ParseAway("link", i.getKey())).get("Id"),
+                            Long.parseLong(i.getValue())-1 // WHAT
                     ));
                 }
             }
