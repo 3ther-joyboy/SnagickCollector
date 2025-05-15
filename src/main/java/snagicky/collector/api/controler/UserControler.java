@@ -16,10 +16,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-// For not that messy saving cards
-enum CardAction { // TODO fix this.. this is not working
-    save, own;
-}
 
 @RestController()
 @RequestMapping("/api/user")
@@ -182,12 +178,12 @@ public class UserControler {
     }
     @GetMapping("/card/{action}/{id}") // Favs/Owned of a user
     public Set<Card> GetSavedCards(
-            @RequestHeader("action") CardAction action,
+            @RequestParam("action") String action,
             @RequestParam("id") Long user
     ) {
         try {
             User u = ur.findById(user).get();
-            if(action == CardAction.own)
+            if(action == "own")
                 return u.OwnedCards;
             else
                 return u.SavedCards;
@@ -198,13 +194,13 @@ public class UserControler {
     @PostMapping("/card/{action}/{id}") // make a favorite/owned for a user
     public ResponseEntity.BodyBuilder CardSave(
             @RequestHeader("token") UUID t,
-            @RequestParam("action") CardAction action,
+            @RequestParam("action") String action,
             @RequestParam("id") Long card
     ){
         try{
             User u = tr.findById(t).get().User;
             // :D
-            (action == CardAction.own ? u.OwnedCards : u.SavedCards ).add(cr.findById(card).get());
+            (action == "own" ? u.OwnedCards : u.SavedCards ).add(cr.findById(card).get());
             ur.save(u);
 
             return ResponseEntity.status(200);
@@ -215,12 +211,12 @@ public class UserControler {
     @DeleteMapping("/card/{action}/{id}") // removes from favorites/owned for a user
     public ResponseEntity.BodyBuilder CardUnSave(
             @RequestHeader("token") UUID t,
-            @RequestHeader("action") CardAction action,
+            @RequestParam("action") String action,
             @RequestParam("id") Long card
     ){
         try{
             User u = tr.findById(t).get().User;
-            if(action == CardAction.own)
+            if(action == "own")
                 u.OwnedCards.remove(cr.findById(card).get());
             else
                 u.SavedCards.remove(cr.findById(card).get());

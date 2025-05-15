@@ -1,10 +1,6 @@
 package snagicky.collector.api.controler;
 
-import jakarta.persistence.criteria.Order;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.JpaSort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import snagicky.collector.api.model.Card;
 import snagicky.collector.api.model.Edition;
@@ -34,19 +30,15 @@ public class CardControler {
     ){
         return cr.findCardAdvanced(allParams);
     }
-    @GetMapping("/{state}/{id}") // TODO test this
+    @GetMapping("/{state}/{id}")
     public Set<User> CardOwnedUsers(
-            @PathVariable("state") CardAction action,
+            @PathVariable("state") String action,
             @PathVariable("id") Long card_id
     ){
-        if(action == CardAction.own)
+        if(action == "own")
             return cr.findById(card_id).get().OwnedBy;
         else
             return cr.findById(card_id).get().SavedBy;
-    }
-    @GetMapping("/all/") // TODO remove this at some point
-    public Iterable<Card> GetAll() {
-        return cr.findAll();
     }
 
     @DeleteMapping("/delete/{id}")
