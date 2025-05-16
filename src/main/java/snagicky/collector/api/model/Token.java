@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
@@ -57,4 +59,10 @@ public class Token {
     private java.sql.Timestamp TerminationDate;
     @CreationTimestamp
     private java.sql.Timestamp Created;
+    public Token(){
+        TerminationDate = new java.sql.Timestamp(System.currentTimeMillis() + 1000 * 60 * 60);
+    }
+    public Token(long Days){
+        TerminationDate = new java.sql.Timestamp(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * Days);
+    }
 }

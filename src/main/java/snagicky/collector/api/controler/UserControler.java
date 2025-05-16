@@ -307,7 +307,7 @@ public class UserControler {
                 {x,o,o,x,x,o,o,o,o,x,x},
                 {x,o,o,x,o,o,o,o,o,o,x},
         };
-        Token ver = new Token();
+        Token ver = new Token(31);
         ver.User = usr;
 
         ver.VerifySelf = PerrmissionsLvl[usr.Perrmission][0];
