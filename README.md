@@ -8,5 +8,6 @@ Database has main 6 table that are connected by another, additional 3 to connect
 ### Card
 ### User
 <img src="https://3ther.org/apps/files_sharing/publicpreview/jifBMBBasNccXRq?file=/&fileId=3191&x=1920&y=1080&a=true&etag=98cb858f665582a2f255b2b38b949764" width="500">
-## Setup
+
+# Setup
 Spring boot can handle most of the things by it self, how ever it needs some aditional nudge on the start
