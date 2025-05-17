@@ -19,4 +19,7 @@ public interface TokenRepo extends CrudRepository<Token,UUID> {
     @Modifying
     @Query(value = "DELETE FROM token WHERE token.user=:Id",nativeQuery = true)
     void LogOutAll( @Param("Id") Long id );
+
+    @Query(value = "SELECT * FROM token WHERE  UNIX_TIMESTAMP(termination_date) - UNIX_TIMESTAMP(NOW()) < 0",nativeQuery = true)
+    Iterable<Token> GetTokenForDeletion();
 }

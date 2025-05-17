@@ -4,6 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 import snagicky.collector.api.model.Card;
 import snagicky.collector.api.model.Token;
@@ -18,6 +21,7 @@ import java.util.UUID;
 
 
 @RestController()
+@EnableScheduling
 @RequestMapping("/api/user")
 public class UserControler {
     @Autowired
@@ -52,6 +56,11 @@ public class UserControler {
                 return UserLoginToken(u).Code;
         }
        return null;
+    }
+    @Scheduled(cron = "0 0 * * * *")
+    public void DeleteVisitorsAndTokens(){
+        ur.deleteAll(ur.GetUserForDeletion());
+        tr.deleteAll(tr.GetTokenForDeletion());
     }
     @PostMapping("/create/{name}")
     public UUID CreateUser(
