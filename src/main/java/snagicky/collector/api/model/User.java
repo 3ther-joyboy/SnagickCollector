@@ -5,14 +5,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.sql.Timestamp;
 import java.util.Set;
 
 @Entity
 @Table(name = "user")
-@ConfigurationProperties("app.user")
 public class User {
     @jakarta.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -77,11 +75,9 @@ public class User {
     @CreationTimestamp
     public Timestamp CTime;
 
-    private String pepper = "Pepper";
     public int Salt(String password) { // [CREATE YOUR OWN SALT](https://www.youtube.com/watch?v=8ZtInClXe1Q)
-        // this is place holder
         CTime.setNanos(0); // It does this somewhere so password when creating the user is different then loging in after
-        String StringPassword = password + CTime + pepper;
+        String StringPassword = password + CTime + "PlaceForEnvironmentVariable";
         int out = StringPassword.hashCode();
         return out;
     }

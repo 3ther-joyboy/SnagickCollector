@@ -50,7 +50,6 @@ public class UserControler {
             User u = ur.findByName(name).get(0);
             if (u.CheckPassword(password))
                 return UserLoginToken(u).Code;
-            else System.out.println("Auth failed: " + u.Salt(password));
         }
        return null;
     }
