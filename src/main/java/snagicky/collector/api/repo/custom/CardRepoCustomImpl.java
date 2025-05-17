@@ -45,7 +45,6 @@ public class CardRepoCustomImpl implements CardRepoCustom{
                     predicates.add(cb.equal(root.get("type").get("Id"),i.getValue()));
                     break;
                 case "edition":
-                    System.out.println(i.getValue());
                     if(i.getValue().isEmpty())
                         edition = cb.isEmpty(root.get("Editions"));
                     else
