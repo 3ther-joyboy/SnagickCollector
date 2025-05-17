@@ -31,14 +31,14 @@ public class User {
     public String Email;
 
     @JsonIgnoreProperties("ByUser")
-    @OneToMany(mappedBy = "ByUser")
+    @OneToMany(mappedBy = "ByUser",cascade = CascadeType.PERSIST)
     public Set<Card> CreatedCards;
 
     @JsonIgnore
     @OneToMany(
             mappedBy = "User",
             orphanRemoval = true,
-            cascade = CascadeType.ALL
+            cascade = CascadeType.REMOVE
     )
     public Set<Token> Tokens;
 
