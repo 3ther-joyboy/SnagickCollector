@@ -55,6 +55,29 @@ public class CardControler {
         }
         return false;
     }
+    @PutMapping("/")
+    public Card EditCard(
+            @RequestHeader("token") UUID token,
+            @RequestHeader(name = "type_id") Long type,
+            @RequestBody() Card card
+    ){
+
+        if(tr.existsById(token)) {
+            Token t = tr.findById(token).get();
+            if (t.EditCards && card.Id != null && cr.existsById(card.Id) && Tr.existsById(type)) {
+                Card c = cr.findById(card.Id).get();
+                card.Editions = c.Editions;
+                card.type = Tr.findById(type).get();
+
+                card.ByUser = c.ByUser;
+                card.SavedBy = c.SavedBy;
+                card.OwnedBy = c.OwnedBy;
+
+                return cr.save(card);
+            }
+        }
+        return null;
+    }
     @PutMapping("/ownership/")
     public boolean EditCard(
             @RequestHeader("token") UUID token,
