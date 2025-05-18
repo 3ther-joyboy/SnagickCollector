@@ -22,7 +22,6 @@ public class TypeControler {
     TypeRepo Tr;
     @Autowired
     SubTypeRepo sr;
-
     @GetMapping("type/")
     public Iterable<Type> GetType(
         @RequestParam(required = false,name = "id") Long id,
