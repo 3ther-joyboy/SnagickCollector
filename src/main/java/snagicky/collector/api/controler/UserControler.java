@@ -42,8 +42,14 @@ public class UserControler {
     }
 
     @GetMapping("/")
-    public Iterable<User> FindUser(){
-        return ur.findAll();
+    public Iterable<User> FindUser(
+            @RequestParam(required = false,name = "id") Long id,
+            @RequestParam(required = false,name = "name") String name,
+            @RequestParam(required = false,name = "bio") String bio,
+            @RequestParam(required = false,name = "page",defaultValue = "0") Integer page,
+            @RequestParam(required = false,name = "scroll",defaultValue = "25") Integer scroll
+    ){
+        return ur.findThem(id,name,bio,page,scroll);
     }
 
     @PostMapping("/login/{name}")
