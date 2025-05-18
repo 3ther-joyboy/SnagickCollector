@@ -16,6 +16,9 @@ public class Edition {
     @Column(name = "name")
     public String Name;
 
+    @Column(name = "description")
+    public String Description;
+
     @JsonIgnore
     @ManyToMany()
     @JoinTable(

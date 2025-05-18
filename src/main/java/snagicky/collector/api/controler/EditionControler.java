@@ -23,10 +23,11 @@ public class EditionControler {
     public Iterable<Edition> Get(
             @RequestParam(required = false,name = "id") Long id,
             @RequestParam(required = false,name = "name") String name,
+            @RequestParam(required = false,name = "description") String des,
             @RequestParam(required = false,name = "page",defaultValue = "0") Integer page,
             @RequestParam(required = false,name = "scroll",defaultValue = "25") Integer scroll
     ){
-        return er.FindEdition(id,name,page,scroll);
+        return er.FindEdition(id,name,des,page,scroll);
     }
     @PostMapping("/{Name}/")
     public Edition CreateEdition(
