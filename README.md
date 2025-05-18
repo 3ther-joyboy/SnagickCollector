@@ -22,14 +22,14 @@ And that's not mentioning that this is "old" (started at 2007) board game, meani
 ## Technologies
 Whole project is mainly created in Java21 with SpringBoot, but other technologies had to be user to make it work.
   - Java 21
-    - Spring Boot
-  - MariaDB
-  - PostMan
-  - Fedora
-  - CloudFlare
-  - Google  
+    - Spring Boot - For connecting to database and creation of rest api
+  - MariaDB - Open source database program
+  - PostMan - RestApi tester
+  - Fedora - ServerOS by RedHead
+  - CloudFlare - DNS server for [3ther.org:8080](http://3ther.org:8080/api/test/) (Mine server is runing on port ``:8080``)
+  - Google - For sanding emails
 ## Database
-Database has main 6 table that are connected by another and additional 3 to connect them (55 colums in the whole database). <br> In the database there are stored mainly [Cards](#card) and then [Users](#user) that can save the cards that they like or the cards they own (this game have a hevely involved trading element) 
+Database has main 6 table that are connected by another and additional 3 to connect them (56 colums in the whole database). <br> In the database there are stored mainly [Cards](#card) and then [Users](#user) that can save the cards that they like or the cards they own (this game have a hevely involved trading element) 
 ### Database structure
 [Card](#card) has a (Many-To-One) [User](#user) who created it, [Users](#user) that saved the card or is owned by them (Many-To-Many), a [Type](#type) (One-To-Many) and [Edition](#edition) theyr are apart of (Many-To-Many). <br>
 [Type](#type) has additionaly a [SubType](#subtype) attached to them (Many-To-One). There are a lot of types of creatures, but all creatures behive the same meaning all creatures types will have same creature sub type. <br>
@@ -37,10 +37,53 @@ Database has main 6 table that are connected by another and additional 3 to conn
 <img src="https://3ther.org/apps/files_sharing/publicpreview/jifBMBBasNccXRq?file=/&fileId=3191&x=1920&y=1080&a=true&etag=98cb858f665582a2f255b2b38b949764" width="500">
 
 ### Card
+Every card have colums for it costs and everything is storet as a ``byte`` (Snagickys have just 4 basic elements unlike MGT where there are 6 + multicolor)
+  - ``red``
+  - ``blue``
+  - ``green``
+  - ``white``
+  - ``multi``
+  - ``special_cost`` - If some cards cost some X mana it has to be writen as a string for displaying (``xxb2``, for X X and 2 blue manas)
+
+Colums that describes the card
+  - ``name``
+  - ``description`` - What abilityes does the card have
+  - ``story`` - Small bit of throw away gag about the card
+  - ``note`` - If creators need something to say about the card, for an example if the card is banned in turnament play.
+  - ``rarity`` - How rare is the card, basic ratings are ``c u r`` but sometimes card with ``S``pesial rarities are created.
+  - ``type`` - Links to waht [Type](#type) the card is
+  - ``id`` - Unike identifier for the card
+
+Most of the cards are creatures therefore they have ``attack`` and ``defense`` by default
+  - ``attack``
+  - ``defense``
+
+Bonus info that doesnt isnt needed most of the times
+  - ``created_by`` - By who the card was created, eather as a someone who put it in the database, or who have come up with the consept
+  - ``created`` - when the card was created in the database
+  - ``updated`` - when was the last update of the card
 ### Edition
+Editions have just a few information because they are not needed for anything (Mabe just how rare the card is compare to somehting else)
+  - ``id``
+  - ``name`` - Name of the edition
+  - ``description`` - How old is the Edition out, if there are any reprints or any possible usefull information
 ### Type
+  - ``id``
+  - ``name``
+  - ``sub_type`` - There are usually types of "types" (red cristal, blue cristal.. its still a cristal and it acts like it)
 ### SubType
+  - ``id``
+  - ``name``
+  - ``description`` - How this type acts, what are its special trades (creatures can attack and block, cristals give mana every turn)
 ### User
+  - ``id``
+  - ``bio`` - To tell something about the user (In our scout group it would be something like a discord tag)
+  - ``name`` - Has to be unike
+  - ``password`` - hased, pappered, salted password
+  - ``re_email`` - email for any authenticiation
+  - ``perrmission`` - Perrmission level (0 - Unverified, 1 - User, 2 - Admin, 3 - Root)
+  - ``ctime`` - Creation time
+  - ``utime`` - Last Updated
 ### Token
 Tokens that are more accuratly called sessios, they grand users acces to theyr account and allows users to do sertant things. (create consept cards, create real ones or delete cards) <br>
 Perrmissions are stored in the [Token](#token) table (in hindsight, it wasnt a good idea). The idea was to create a system where administrator can give timed privilegia to other user to help him out (When we are on a meating, I could allow some scouts to manage some stuff and when the meeting ends, the tokens would terminate). How ever, you cannot say what token is user currently using, it takes aditional space in database, the privilegias are generated on user perrmissions level anyway and when updating someones perrmissions they have to re-log to create new token where are theyr new perrmissions.
