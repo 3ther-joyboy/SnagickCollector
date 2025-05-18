@@ -1,5 +1,6 @@
 package snagicky.collector.api.controler;
 
+import org.antlr.v4.runtime.tree.xpath.XPathLexerErrorListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
@@ -236,10 +237,27 @@ public class UserControler {
         }
     }
 
+    @PutMapping("/perrmission/")
+    public boolean ChangePerrmission(
+            @RequestHeader("token") UUID code,
+            @RequestHeader("id") Long id,
+            @RequestHeader("permission") int permission
+    ){
+        if(tr.existsById(code)){
+            Token t = tr.findById(code).get();
+            if(t.ChangePermission && t.User.Perrmission > permission && ur.existsById(id)) {
+                User u = ur.findById(id).get();
+                u.Perrmission = permission;
+                ur.save(u);
+                return true;
+            }
+        }
+        return false;
+    }
     @PutMapping("/edit/")
     public User EditBio(
             @RequestHeader("token") UUID t,
-            @RequestHeader(value = "bio",required = false) String bio,
+            @RequestBody(required = false) String bio,
             @RequestHeader(value = "name",required = false) String name,
             @RequestHeader(value = "user_id",required = false) Long id
     ){
