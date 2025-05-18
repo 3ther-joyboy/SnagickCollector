@@ -45,6 +45,9 @@ dependencies {
 
 	implementation "org.springframework:spring-context-support:6.1.5"
 	implementation "org.springframework.boot:spring-boot-starter-mail:3.1.5"
+
+
+	implementation "org.springframework.boot:spring-boot-starter-security"
 }
 
 tasks.named('test') {

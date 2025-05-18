@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.sql.Timestamp;
 import java.util.Set;
@@ -24,7 +26,7 @@ public class User {
 
     @JsonIgnore
     @Column(name = "password")
-    public int Password;
+    public String Password;
 
     @JsonIgnore
     @Column(name = "re_email", nullable = true)
@@ -75,13 +77,15 @@ public class User {
     @CreationTimestamp
     public Timestamp CTime;
 
-    public int Salt(String password) { // [CREATE YOUR OWN SALT](https://www.youtube.com/watch?v=8ZtInClXe1Q)
+    public String Salt(String password) { // [CREATE YOUR OWN SALT](https://www.youtube.com/watch?v=8ZtInClXe1Q)
         CTime.setNanos(0); // It does this somewhere so password when creating the user is different then loging in after
         String StringPassword = password + CTime + "PlaceForEnvironmentVariable";
-        int out = StringPassword.hashCode();
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
+        String out = encoder.encode(StringPassword);
         return out;
     }
     public boolean CheckPassword(String password){
-        return (Password == Salt(password));
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
+        return encoder.matches(password,Password);
     }
 }
