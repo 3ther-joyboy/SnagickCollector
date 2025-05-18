@@ -45,9 +45,9 @@ public class Card {
     public String Rarity;
 
     @Column(name = "attack")
-    public int Attack;
+    public byte Attack;
     @Column(name = "defense")
-    public int Defense;
+    public byte Defense;
 
     @Column(name = "name",nullable = false)
     public String Name;
@@ -59,13 +59,16 @@ public class Card {
     public String Note;
 
     @Column(name = "red", nullable = false)
-    public int Red = 0;
+    public byte Red = 0;
     @Column(name = "blue",nullable = false)
-    public int Blue = 0;
+    public byte Blue = 0;
     @Column(name = "green",nullable = false)
-    public int Green = 0;
+    public byte Green = 0;
     @Column(name = "white",nullable = false)
-    public int White = 0;
+    public byte White = 0;
     @Column(name = "multi",nullable = false)
-    public int Multi = 0;
+    public byte Multi = 0;
+
+    @Column(name = "special_cost")
+    public String SpecialCost;
 }
