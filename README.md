@@ -13,7 +13,7 @@
       - [Perrmission list](#perrmission-list)
       - [Other](#other)
   - [End Points](#end-points)
-    - [Card Advanced Get](#card-advanced-get)
+    - [Get Cards](#get-cards)
   - [Setup](#setup)
 ## About
 This is a backend for a server that collects cards from a copy of [MTG](https://en.wikipedia.org/wiki/Magic:_The_Gathering) that we play in scout called Snagicky.
@@ -84,6 +84,18 @@ Editions have just a few information because they are not needed for anything (M
   - ``perrmission`` - Perrmission level (0 - Unverified, 1 - User, 2 - Admin, 3 - Root)
   - ``ctime`` - Creation time
   - ``utime`` - Last Updated
+#### Storing passwords
+Storing passwords in plane text is a security hazard, if your database is leaked. It wouldnt mean big troubles just for you, but for your users as wel. There for all passwords has to be hashed. To avoid having same hases as hackers in rainbow tables, we add a little bit of pepper and to avoid having two same passwords having a same hash we add salt (In this situation we use salt as creation date of the user).<br>
+BCrypt is 
+```java
+    public String Salt(String password) {
+        CTime.setNanos(0);
+        String StringPassword = password + CTime + "Pepper";
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
+        String out = encoder.encode(StringPassword);
+        return out;
+    }
+```
 ### Token
 Tokens that are more accuratly called sessios, they grand users acces to theyr account and allows users to do sertant things. (create consept cards, create real ones or delete cards) <br>
 Perrmissions are stored in the [Token](#token) table (in hindsight, it wasnt a good idea). The idea was to create a system where administrator can give timed privilegia to other user to help him out (When we are on a meating, I could allow some scouts to manage some stuff and when the meeting ends, the tokens would terminate). How ever, you cannot say what token is user currently using, it takes aditional space in database, the privilegias are generated on user perrmissions level anyway and when updating someones perrmissions they have to re-log to create new token where are theyr new perrmissions.
@@ -105,7 +117,8 @@ Perrmissions are stored in the [Token](#token) table (in hindsight, it wasnt a g
   - ``code`` - Acces code to this token
 
 ## End Points
-### Card Advanced Get
+### Get Cards
+``/api/card/``<br>
 There are multiple ways to do this, send a Card model in the body (same as creating a new card). Problem with this is when user wants to send someone cards they found, but they are unable to just copy the url link because thatwould have the header/body missing. There fore everything can be searched in query parameters (part after ? in urls ``/card/?equals_id=1``). <br>
 For more options before saying what paramteter to search for you add what type of search you use. <br>
   - General search
@@ -123,6 +136,50 @@ For more options before saying what paramteter to search for you add what type o
     - ``type`` - Same as using link, just nicer
     - ``edition`` - Same as link, just nicer. If you arnt doing anything, cards without edition (cards created by someone other then admins) arnt showing up, you can filter just for these cards by including this paramteter and not filling it. 
 I have saved all end points in to PostMan database to try out
+
+Cards are the only thing that needs this muc options for searching and everything else is "hard" coded.<br>
+In code it works by taking java ``Map<String,String>`` as a parameter, as a side effect of this you cannot create a lists (``@RequestParam("foo") List<String> foo``) of one parameter, because java Map has to have just One key value
+```java
+    @GetMapping("/")
+    public Iterable<Card> FindCard(
+            @RequestParam Map<String,String> allParams
+    ){
+        return cr.findCardAdvanced(allParams);
+    }
+```
+### Get Edition
+``/api/edition/``<br>
+List of elements its possible to search by
+  - ``id=long`` 
+  -  ``name=%string%`` - Searches for name that contains this sub string
+  -  ``description=%string%`` - Searches for description that contains this sub string
+  -  ``page=int`` - what page you are currently on
+  -  ``scroll=int`` - sizing of the page
+### Get Type
+``/api/type/``<br>
+List of elements its possible to search by
+  - ``id=long`` 
+  -  ``name=%string%`` - Searches for name that contains this sub string
+  -  ``sub_type=long`` - id of a subtype
+  -  ``page=int`` - what page you are currently on
+  -  ``scroll=int`` - sizing of the page
+### Get SubType
+``/api/subtype/``<br>
+List of elements its possible to search by
+  - ``id=long`` 
+  -  ``name=%string%`` - Searches for name that contains this sub string
+  -  ``description=%string%`` - Searches for description that contains this sub string
+  -  ``page=int`` - what page you are currently on
+  -  ``scroll=int`` - sizing of the page
+### Get User
+``/api/user/``<br>
+List of elements its possible to search by
+  - ``id=long`` 
+  -  ``name=%string%`` - Searches for name that contains this sub string
+  -  ``bio=%string%`` - Searches for bio that contains this sub string
+  -  ``page=int`` - what page you are currently on
+  -  ``scroll=int`` - sizing of the page
+
 # Setup
 Spring boot can handle most of the things by it self, how ever it needs some aditional nudge on the start. <br> 
 First of all, there is a config file at ``/src/main/resources/application.properties`` that has to be filled with with basic information.
@@ -140,3 +197,6 @@ First of all, there is a config file at ``/src/main/resources/application.proper
    - your password is a passkey that you have to generate on [google](https://www.google.com/account/about/passkeys/) 
  - Root User
    - You cannot have a Root user unless you edit perrmissions of already created user throught database
+# Where is this project going?
+This is jsut a backend for scout database, I will be adding a mobile app and a [website like I this](https://3ther-joyboy.github.io/snagicky/snagicky.html), but browsers refuse to comunicate with servers taht doesnt have SSL (CloudFlare is giving out certificates)<br>
+Because this is a server side, i havent got a chance to implement [Have I been Pwned](https://haveibeenpwned.com/) API to check if your password is strong
