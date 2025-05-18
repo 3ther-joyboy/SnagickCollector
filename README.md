@@ -1,13 +1,45 @@
 # Snagick Collector (doc)
+## Navigation
+  - [About](#about)
+  - [Technologies](#technologies)
+  - [Database](#database)
+    - [Database Structure](#database-structure)
+    - [Card](#card)
+    - [Edition](#edition)
+    - [Type](#type)
+    - [SubType](#subtype)
+    - [User](#user)
+    - [Token](#token)
+      - [Perrmission list](#perrmission-list)
+      - [Other](#other)
+  - [End Points](#end-points)
+    - [Card Advanced Get](#card-advanced-get)
+  - [Setup](#setup)
 ## About
 This is a backend for a server that collects cards from a copy of [MTG](https://en.wikipedia.org/wiki/Magic:_The_Gathering) that we play in scout called Snagicky.
 For a long time we had just bunch of Excel documents that hold the whole thing barely to gather, consistent naming convention out of the winow and non-functioning search (Just the names). 
 And that's not mentioning that this is "old" (started at 2007) board game, meaning many these excel "databases" have been lost to time.
 ## Technologies
-Whole project is mainly created in Java21 with SpringBoot, but 
+Whole project is mainly created in Java21 with SpringBoot, but other technologies had to be user to make it work.
+  - Java 21
+    - Spring Boot
+  - MariaDB
+  - PostMan
+  - Fedora
+  - CloudFlare
+  - Google  
 ## Database
-Database has main 6 table that are connected by another and additional 3 to connect them (55 colums in the whole). <br> In the database there are stored mainly [Cards](#card) and then [Users](#user) that can save the cards that they like or the cards they own (this game have a hevely involved trading element) 
+Database has main 6 table that are connected by another and additional 3 to connect them (55 colums in the whole database). <br> In the database there are stored mainly [Cards](#card) and then [Users](#user) that can save the cards that they like or the cards they own (this game have a hevely involved trading element) 
+### Database structure
+[Card](#card) has a (Many-To-One) [User](#user) who created it, [Users](#user) that saved the card or is owned by them (Many-To-Many), a [Type](#type) (One-To-Many) and [Edition](#edition) theyr are apart of (Many-To-Many). <br>
+[Type](#type) has additionaly a [SubType](#subtype) attached to them (Many-To-One). There are a lot of types of creatures, but all creatures behive the same meaning all creatures types will have same creature sub type. <br>
+[Users](#user) have [Tokens](#token) connected to them to allow them log it to the server (One-To-Many). 
+<img src="https://3ther.org/apps/files_sharing/publicpreview/jifBMBBasNccXRq?file=/&fileId=3191&x=1920&y=1080&a=true&etag=98cb858f665582a2f255b2b38b949764" width="500">
+
 ### Card
+### Edition
+### Type
+### SubType
 ### User
 ### Token
 Tokens that are more accuratly called sessios, they grand users acces to theyr account and allows users to do sertant things. (create consept cards, create real ones or delete cards) <br>
@@ -28,8 +60,6 @@ Perrmissions are stored in the [Token](#token) table (in hindsight, it wasnt a g
   - ``created`` - when the token was created
   - ``user`` - what user does own this token
   - ``code`` - Acces code to this token
-
-<img src="https://3ther.org/apps/files_sharing/publicpreview/jifBMBBasNccXRq?file=/&fileId=3191&x=1920&y=1080&a=true&etag=98cb858f665582a2f255b2b38b949764" width="500">
 
 ## End Points
 ### Card Advanced Get
