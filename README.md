@@ -103,7 +103,7 @@ Perrmissions are stored in the [Token](#token) table (in hindsight, it wasnt a g
   - ``verify_self`` - Users cannot veryfi them selfs on theyr own, a special tokenw with this perrmissions is generated and send on theyr email, or a user with ``verify_other`` can verify them insted
   - ``verify_other`` - With this token, users can verify others (from perrmission 0 to 1)
   - ``edit_self`` - User can edit theyr name, bio, or what ever they have on theyr profile
-  - ``delete_self`` - This token is eather send on users email, or it has to be requested on the site. By default this perrmissions is false due to cross site scripting.
+  - ``delete_self`` - This token is eather send on users email, or it has to be requested on the site. By default this perrmissions is false due to cross side request forgery.
   - ``edit_lower`` - User can edit profiles of other users that have lower perrmission levl then him.
   - ``create_cards`` - Allows user to create cards with editions/types/subtipes and asign them
   - ``create_test_cards`` - Allows normal users to create cards without edition attached to them (these cards doesnt show up in the card search unless specificly searched for them)
@@ -147,38 +147,81 @@ In code it works by taking java ``Map<String,String>`` as a parameter, as a side
         return cr.findCardAdvanced(allParams);
     }
 ```
-### Get Edition
+### Get Mappings
+They have these by default
+  - ``id=long`` - Unike identifier
+  - ``name=%string%`` - Searches for name that contains this sub string
+  - ``page=int`` - what page you are currently on
+  - ``scroll=int`` - sizing of the page
+#### Get Edition
 ``/api/edition/``<br>
-List of elements its possible to search by
-  - ``id=long`` 
-  -  ``name=%string%`` - Searches for name that contains this sub string
   -  ``description=%string%`` - Searches for description that contains this sub string
-  -  ``page=int`` - what page you are currently on
-  -  ``scroll=int`` - sizing of the page
-### Get Type
+#### Get Type
 ``/api/type/``<br>
-List of elements its possible to search by
-  - ``id=long`` 
-  -  ``name=%string%`` - Searches for name that contains this sub string
   -  ``sub_type=long`` - id of a subtype
-  -  ``page=int`` - what page you are currently on
-  -  ``scroll=int`` - sizing of the page
-### Get SubType
+#### Get SubType
 ``/api/subtype/``<br>
-List of elements its possible to search by
-  - ``id=long`` 
-  -  ``name=%string%`` - Searches for name that contains this sub string
   -  ``description=%string%`` - Searches for description that contains this sub string
-  -  ``page=int`` - what page you are currently on
-  -  ``scroll=int`` - sizing of the page
-### Get User
+#### Get User
 ``/api/user/``<br>
-List of elements its possible to search by
-  - ``id=long`` 
-  -  ``name=%string%`` - Searches for name that contains this sub string
   -  ``bio=%string%`` - Searches for bio that contains this sub string
-  -  ``page=int`` - what page you are currently on
-  -  ``scroll=int`` - sizing of the page
+### Post Mappings
+Urls that creates objects in database<br>
+  - ``token`` - UUID with your token code (this is a header)
+#### Create Card
+``/api/card/create/``<br>
+  - Headers
+    - ``edition_id`` [not required] - You need to have ``create_cards`` perrmission to use this (it automaticly asigns the newly created card to that edition)
+    - ``type_id`` - Type of newly created card
+  - Body - Json of the Card object
+#### Create Edition
+``/api/edition/{name}/``<br>
+  - Path Variables
+    - ``name`` - name of the edition
+#### Create SubType
+``/api/subtype/{name}``<br>
+  - Path Variables
+    - ``name`` - name of the sub type
+  - Body - String with description of what does the type do (This couldnt be in header because that doesnt allow extended ASCII)
+#### Create Type
+``/api/type/{name}/{sub}``<br>
+  - Path Variables
+    - ``name`` - Name of the type
+    - ``sub`` - What [SubType](#subtype) it is
+#### Create User
+``/api/user/create/{name}`` - Returns acces code ``UUID``<br>
+  - Path Variables
+    - ``name`` - Name of the user (has to be unike)
+  - Headers
+    - ``password`` - Password for this accout, headers are encoded there for no one can see it
+    - ``email`` [not required] - User gets verificaton email, without it user has to wait untill Admin verifies him or gets deleted
+### Manipulation with Tokens
+Because workint with tokens is a complicated task, it has chapter on its own. After creating user with email, you are sended verification email with ``http://3ther.org:8080/api/user/verifi/{uuid token}``, thins endpoint take uuid code that will verifi the user ([this wont work now](#where-is-this-project-going)). User has to re-log, to get new perrmissions. <br>
+#### Login [Post]
+``/api/user/login/{name}`` - Returns acces code ``UUID``<br>
+  - Path Variables
+    - ``name``
+  - Headers
+    - ``password``
+#### Logging Out [Delete]
+  - ``/api/user/logout/`` - Deletes this logging token
+    - Headers
+      - ``token``
+  - ``/api/user/quit/`` - Deletes all tokens of target user, if no user is given (Or lack of perrmission). User that sended the ``token`` is log-out
+    - Headers
+      - ``token``
+      - ``id`` [not required]
+#### Delete User
+This is done like this to prevent 
+
+``/api/user/delete/{id}`` [Post] - Returns code ``UUID``
+  - Path Variables
+    - ``id``
+  - Header
+    - ``token``
+If ``id`` and owner of ``token`` arnt the same, then ``token`` is checked if its allowed to delete other users.<br>
+``/api/user/delete/{token}`` [Delete] - Deletes user with that ``token`` (token has to have perrmission to do that)
+
 
 # Setup
 Spring boot can handle most of the things by it self, how ever it needs some aditional nudge on the start. <br> 
@@ -197,6 +240,10 @@ First of all, there is a config file at ``/src/main/resources/application.proper
    - your password is a passkey that you have to generate on [google](https://www.google.com/account/about/passkeys/) 
  - Root User
    - You cannot have a Root user unless you edit perrmissions of already created user throught database
+ - Machine
+   - Have all steps above
+   - Java installed
+   - run command: ``java -jar file.jar``
 # Where is this project going?
-This is jsut a backend for scout database, I will be adding a mobile app and a [website like I this](https://3ther-joyboy.github.io/snagicky/snagicky.html), but browsers refuse to comunicate with servers taht doesnt have SSL (CloudFlare is giving out certificates)<br>
+This is jsut a backend for scout database, I will be adding a mobile app and a [website like I this](https://3ther-joyboy.github.io/snagicky/snagicky.html), but browsers refuse to comunicate with servers taht doesnt have SSL (CloudFlare is giving out certificates). Before creating a website whole program has to be protected from Cross Side Scripting.<br>
 Because this is a server side, i havent got a chance to implement [Have I been Pwned](https://haveibeenpwned.com/) API to check if your password is strong
