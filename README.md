@@ -1,20 +1,4 @@
 # Snagick Collector (doc)
-## Navigation
-  - [About](#about)
-  - [Technologies](#technologies)
-  - [Database](#database)
-    - [Database Structure](#database-structure)
-    - [Card](#card)
-    - [Edition](#edition)
-    - [Type](#type)
-    - [SubType](#subtype)
-    - [User](#user)
-    - [Token](#token)
-      - [Perrmission list](#perrmission-list)
-      - [Other](#other)
-  - [End Points](#end-points)
-    - [Get Cards](#get-cards)
-  - [Setup](#setup)
 ## About
 This is a backend for a server that collects cards from a copy of [MTG](https://en.wikipedia.org/wiki/Magic:_The_Gathering) that we play in scout called Snagicky.
 For a long time we had just bunch of Excel documents that hold the whole thing barely to gather, consistent naming convention out of the winow and non-functioning search (Just the names). 
