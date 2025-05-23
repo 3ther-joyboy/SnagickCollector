@@ -15,7 +15,7 @@ public interface EditionRepo extends CrudRepository<Edition,Long> {
 
             "(:Description is null or INSTR(edition.description, :Description)) " +
 
-            "ORDER BY edition.name DESC LIMIT :End OFFSET :Start"
+            "ORDER BY edition.name LIMIT :End OFFSET :Start"
     )
     Iterable<Edition> FindEdition(
             @Param("Id") Long id,

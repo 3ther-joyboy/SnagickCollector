@@ -27,7 +27,7 @@ public interface UserRepo extends CrudRepository<User,Long> {
             "(:Name is null or INSTR(user.name,:Name)) and " +
             "(:Bio is null or INSTR(user.bio, :Bio)) " +
 
-            "ORDER BY user.name DESC LIMIT :End OFFSET :Start"
+            "ORDER BY user.name LIMIT :End OFFSET :Start"
     )
     Iterable<User> findThem(
             @Param("Id") Long id,

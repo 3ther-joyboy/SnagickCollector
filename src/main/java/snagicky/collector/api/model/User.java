@@ -62,7 +62,6 @@ public class User {
     )
     public Set<Card> SavedCards;
 
-    @JsonIgnore
     @Column(name = "perrmission")
     public int Perrmission = 0;
     // visitor  = 0

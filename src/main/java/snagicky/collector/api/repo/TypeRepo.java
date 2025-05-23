@@ -14,7 +14,7 @@ public interface TypeRepo extends CrudRepository<Type,Long> {
             "(:Name is null or INSTR(type.name,:Name)) and " +
             "(:SubType is null or type.sub_type = :SubType) " +
 
-            "ORDER BY type.name DESC LIMIT :End OFFSET :Start"
+            "ORDER BY type.name LIMIT :End OFFSET :Start"
     )
     Iterable<Type> FindType(
             @Param("Id") Long id,
