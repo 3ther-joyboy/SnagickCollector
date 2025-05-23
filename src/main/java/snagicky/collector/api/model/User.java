@@ -77,15 +77,18 @@ public class User {
     @CreationTimestamp
     public Timestamp CTime;
 
+    private String SaltPassword(String password){
+        return password + CTime + "PlaceForEnvironmentVariable";
+    }
     public String Salt(String password) { // [CREATE YOUR OWN SALT](https://www.youtube.com/watch?v=8ZtInClXe1Q)
         CTime.setNanos(0); // It does this somewhere so password when creating the user is different then loging in after
-        String StringPassword = password + CTime + "PlaceForEnvironmentVariable";
+        String StringPassword = SaltPassword(password);
         PasswordEncoder encoder = new BCryptPasswordEncoder();
         String out = encoder.encode(StringPassword);
         return out;
     }
     public boolean CheckPassword(String password){
         PasswordEncoder encoder = new BCryptPasswordEncoder();
-        return encoder.matches(password,Password);
+        return encoder.matches(SaltPassword(password),Password);
     }
 }
