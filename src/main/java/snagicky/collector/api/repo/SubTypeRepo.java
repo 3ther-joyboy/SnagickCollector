@@ -13,7 +13,7 @@ public interface SubTypeRepo extends CrudRepository<SubType,Long> {
     @Query(nativeQuery = true,value = "SELECT * from sub_type where " +
             "(:Id is null or sub_type.id = :Id ) and " +
             "(:Name is null or INSTR(sub_type.name,:Name)) and " +
-            "(:Description is null or INSTR(sub_type.description, :Description)) and " +
+            "(:Description is null or INSTR(sub_type.description, :Description)) " +
 
             "ORDER BY sub_type.name DESC LIMIT :End OFFSET :Start"
     )

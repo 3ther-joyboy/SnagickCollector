@@ -25,7 +25,7 @@ public interface UserRepo extends CrudRepository<User,Long> {
     @Query(nativeQuery = true,value = "SELECT * from sub_type where " +
             "(:Id is null or user.id = :Id ) and " +
             "(:Name is null or INSTR(user.name,:Name)) and " +
-            "(:Bio is null or INSTR(user.bio, :Bio)) and " +
+            "(:Bio is null or INSTR(user.bio, :Bio)) " +
 
             "ORDER BY user.name DESC LIMIT :End OFFSET :Start"
     )

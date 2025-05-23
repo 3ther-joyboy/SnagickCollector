@@ -13,7 +13,7 @@ public interface EditionRepo extends CrudRepository<Edition,Long> {
             "(:Id is null or edition.id = :Id ) and " +
             "(:Name is null or INSTR(edition.name,:Name)) and " +
 
-            "(:Description is null or INSTR(edition.description, :Description)) and " +
+            "(:Description is null or INSTR(edition.description, :Description)) " +
 
             "ORDER BY edition.name DESC LIMIT :End OFFSET :Start"
     )

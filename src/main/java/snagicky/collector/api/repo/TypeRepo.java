@@ -12,7 +12,7 @@ public interface TypeRepo extends CrudRepository<Type,Long> {
     @Query(nativeQuery = true,value = "SELECT * from type where " +
             "(:Id is null or type.id = :Id ) and " +
             "(:Name is null or INSTR(type.name,:Name)) and " +
-            "(:SubType is null or type.sub_type = :SubType) and " +
+            "(:SubType is null or type.sub_type = :SubType) " +
 
             "ORDER BY type.name DESC LIMIT :End OFFSET :Start"
     )
