@@ -22,7 +22,7 @@ public interface UserRepo extends CrudRepository<User,Long> {
     Iterable<User> GetUserForDeletion();
 
 
-    @Query(nativeQuery = true,value = "SELECT * from sub_type where " +
+    @Query(nativeQuery = true,value = "SELECT * from user where " +
             "(:Id is null or user.id = :Id ) and " +
             "(:Name is null or INSTR(user.name,:Name)) and " +
             "(:Bio is null or INSTR(user.bio, :Bio)) " +
