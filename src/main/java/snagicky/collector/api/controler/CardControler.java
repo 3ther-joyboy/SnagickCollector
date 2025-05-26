@@ -49,7 +49,7 @@ public class CardControler {
         if(tr.existsById(token)) {
             Token t = tr.findById(token).get();
             if (t.EditCards) {
-                cr.findById(card);
+                cr.deleteById(card);
                 return true;
             }
         }
@@ -111,14 +111,14 @@ public class CardControler {
                 card.ByUser = t.User;
                 card.type = Tr.findById(type).get();
 
+
+
+                Card out = cr.save(card);
+
                 // Edition stuff
-                if(edition != null && t.CreateCards) {
-                    card.Editions = new HashSet<>();
-                    card.Editions.add(er.findById(edition).get());
-                }
-
-
-                return cr.save(card);
+                if(edition != null && t.CreateCards)
+                    AddToEdition(token,edition,out.Id);
+                return out;
             }
         }
         return null;

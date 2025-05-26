@@ -29,13 +29,13 @@ public class Card {
     public User ByUser;
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "OwnedCards")
+    @ManyToMany(mappedBy = "OwnedCards",cascade = CascadeType.PERSIST)
     public Set<User> OwnedBy;
     @JsonIgnore
-    @ManyToMany(mappedBy = "SavedCards")
+    @ManyToMany(mappedBy = "SavedCards",cascade = CascadeType.PERSIST)
     public Set<User> SavedBy;
 
-    @ManyToMany(mappedBy = "Cards")
+    @ManyToMany(mappedBy = "Cards",cascade = CascadeType.PERSIST)
     public Set<Edition> Editions;
 
     @ManyToOne

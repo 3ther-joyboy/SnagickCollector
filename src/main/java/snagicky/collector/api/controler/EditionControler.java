@@ -45,11 +45,13 @@ public class EditionControler {
     public Edition RenameEdition(
             @PathVariable("id") Long id,
             @PathVariable("name") String name,
-            @RequestHeader("token") UUID code
+            @RequestHeader("token") UUID code,
+            @RequestBody String dis
     ) {
         if (tr.findById(code).get().CreateCards) {
             Edition e = er.findById(id).get();
             e.Name = name;
+            e.Description = dis;
             return er.save(e);
         } else
             return null;
