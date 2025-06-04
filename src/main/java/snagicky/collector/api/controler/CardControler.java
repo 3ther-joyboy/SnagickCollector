@@ -49,6 +49,9 @@ public class CardControler {
         if(tr.existsById(token)) {
             Token t = tr.findById(token).get();
             if (t.EditCards) {
+                Card c = cr.findById(card).get();
+                c.Editions = new HashSet<>();
+                cr.save(c);
                 cr.deleteById(card);
                 return true;
             }
@@ -111,13 +114,13 @@ public class CardControler {
                 card.ByUser = t.User;
                 card.type = Tr.findById(type).get();
 
-
-
+                // Edition stuff
+                if(edition != null && t.CreateCards) {
+                    card.Editions = new HashSet<>();
+                    card.Editions.add(er.findById(edition).get());
+                }
                 Card out = cr.save(card);
 
-                // Edition stuff
-                if(edition != null && t.CreateCards)
-                    AddToEdition(token,edition,out.Id);
                 return out;
             }
         }
@@ -135,8 +138,8 @@ public class CardControler {
             if (t.EditCards) {
                 Edition e = er.findById(edition).get();
                 Card c = cr.findById(card).get();
-                e.Cards.remove(c);
-                er.save(e);
+                c.Editions.remove(e);
+                cr.save(c);
                 return cr.findById(card).get();
             }
         }
@@ -154,8 +157,8 @@ public class CardControler {
             if (t.EditCards) {
                 Edition e = er.findById(edition).get();
                 Card c = cr.findById(card).get();
-                e.Cards.add(c);
-                er.save(e);
+                c.Editions.add(e);
+                cr.save(c);
                 return cr.findById(card).get();
             }
         }

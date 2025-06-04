@@ -16,6 +16,7 @@ import snagicky.collector.api.repo.CardRepo;
 import snagicky.collector.api.repo.TokenRepo;
 import snagicky.collector.api.repo.UserRepo;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -120,8 +121,14 @@ public class UserControler {
     }
     @DeleteMapping("/delete/{token}")
     public void DeleteUser( @PathVariable("token") UUID token ) {
-        if (tr.existsById(token) && tr.findById(token).get().DeleteSelf)
+        if (tr.existsById(token) && tr.findById(token).get().DeleteSelf) {
+            User u = tr.findById(token).get().User;
+            u.SavedCards = new HashSet<>();
+            u.OwnedCards = new HashSet<>();
+            ur.save(u);
+            DeleteAllTokens(token,u.Id);
             ur.deleteById(tr.findById(token).get().User.Id);
+        }
     }
 
     @PostMapping("/delete/{id}")
